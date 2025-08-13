@@ -1,0 +1,43 @@
+@import './variables.css';
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    font-family: var(--font-family);
+    font-size: var(--font-size);
+    line-height: var(--font-height);
+    color: var(--text-main-color);
+    background-color: var(--body-color);
+}
+
+a {
+    text-decoration: none;
+    transition: var(--transition);
+    color: var(--accent-color);
+}
+
+@media (hover: hover) {
+    a:hover {
+        color: var(--accent-hover-color);
+    }
+}
+
+
+.container {
+    max-width: var(--container-width);
+    width: 100%;
+    margin: 0 auto;
+    padding: var(--container-padding);
+}
