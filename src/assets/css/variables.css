@@ -1,6 +1,19 @@
 :root {
     /* COLORS */
-    --body-color: #F8FAFC;
+    --body-gradient: linear-gradient(
+                        to bottom right,
+                        rgba(0, 191, 255, 0.442) 0%,    /* голубой */
+                        rgba(76, 123, 226, 0.426) 10%,   /* переход голубой→фиолет */
+                        rgba(137, 43, 226, 0.439) 25%,   /* фиолетовый */
+                        rgba(200, 76, 192, 0.416) 45%,   /* переход фиолет→розовый */
+                        rgba(255, 105, 180, 0.427) 55%,   /* розовый */
+                        rgba(255, 184, 77, 0.474) 70%,   /* переход розовый→жёлтый */
+                        rgba(255, 217, 0, 0.425) 85%,   /* жёлтый */
+                        rgba(153, 205, 50, 0.443) 95%,   /* переход жёлтый→зелёный */
+                        rgba(50, 205, 50, 0.449) 100%   /* зелёный */
+                        );
+    --main-bg-color: rgba(248, 250, 252, 0.605);
+    --content-color: #F8FAFC;
     --border-color: #E2E8F0;
 
     --text-main-color: #1E293B;
@@ -9,8 +22,8 @@
     --input-bg-color: #F1F5F9;
     --notify-bg-color: #FFF7ED;
 
-    --accent-color: #3B82F6;
-    --accent-hover-color: #2563EB;
+    --accent-color: #b23bf6;
+    --accent-hover-color: #7b3bf6;
     
     --success-color: #10B981;
     --error-color: #EF4444;

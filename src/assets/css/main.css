@@ -15,11 +15,49 @@ body {
     height: 100%;
     width: 100%;
     margin: 0;
+    padding: 20px;
     font-family: var(--font-family);
     font-size: var(--font-size);
     line-height: var(--font-height);
     color: var(--text-main-color);
-    background-color: var(--body-color);
+    background: var(--body-gradient);
+}
+
+button {
+    cursor: pointer;
+    border: none;
+    padding: 0;
+    background: none;
+    color: var(--text-main-color);
+    font-size: var(--font-size);
+    transition: var(--transition);
+}
+
+p {
+    margin: 0;
+}
+
+.wrapper {
+    border-radius: 20px;
+    background-color: var(--main-bg-color);
+    box-shadow: var(--box-shadow);
+    padding: var(--container-padding);
+    height: calc(100vh - 40px);
+    display: flex;
+}
+
+.main {
+    flex-shrink: 1;
+    background-color: var(--content-color);
+    border-radius: 20px;
+    display: flex;
+    overflow: hidden;
+}
+
+.content {
+    flex-shrink: 1;
+    flex-grow: 1;
+    padding: var(--container-padding);
 }
 
 a {
