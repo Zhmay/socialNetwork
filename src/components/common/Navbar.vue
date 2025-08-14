@@ -6,10 +6,10 @@
             <a href="#" class="navbar__logo">ZHNetwork</a>
         </div>
         <nav class="navbar__list">
-            <a href="#" class="navbar__link active">Home</a>
-            <a href="#" class="navbar__link">People</a>
-            <a href="#" class="navbar__link">Messages</a>
-            <a href="#" class="navbar__link">Settings</a>
+            <router-link to="/" class="navbar__link">Home</router-link>
+            <router-link to="/people" class="navbar__link">People</router-link>
+            <router-link to="/messages" class="navbar__link">Messages</router-link>
+            <router-link to="/settings" class="navbar__link">Settings</router-link>
         </nav>
     </aside>
 </template>
@@ -51,7 +51,7 @@
             color: var(--text-main-color);
             transition: all .3s ease;
 
-            &.active {
+            &.router-link-active {
                 background-color: var(--content-color);
             }
         }

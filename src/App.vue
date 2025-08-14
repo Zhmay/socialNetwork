@@ -8,7 +8,7 @@
     <Navbar/>
     <main class="main">
       <div class="content">
-        <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Asperiores perferendis tenetur atque rerum eligendi porro, omnis magni aspernatur illum culpa quas reprehenderit laborum voluptatibus laboriosam, ut quis! Officiis, harum repellendus.</p>
+        <router-view />
       </div>
       <Sidebar/>
     </main>
