@@ -1,4 +1,6 @@
-<script setup></script>
+<script setup>
+    import SvgIcon from '@/components/common/SvgIcon.vue';
+</script>
 
 <template>
     <aside class="navbar">
@@ -6,10 +8,22 @@
             <a href="#" class="navbar__logo">ZHNetwork</a>
         </div>
         <nav class="navbar__list">
-            <router-link to="/" class="navbar__link">Home</router-link>
-            <router-link to="/people" class="navbar__link">People</router-link>
-            <router-link to="/messages" class="navbar__link">Messages</router-link>
-            <router-link to="/settings" class="navbar__link">Settings</router-link>
+            <router-link to="/" class="navbar__link">
+                <SvgIcon name="home" size="24"/>
+                <span>Home</span>
+            </router-link>
+            <router-link to="/people" class="navbar__link">
+                <SvgIcon name="users" size="24"/>
+                <span>People</span>
+            </router-link>
+            <router-link to="/messages" class="navbar__link">
+                <SvgIcon name="messages" size="24"/>
+                <span>Messages</span>
+            </router-link>
+            <router-link to="/settings" class="navbar__link">
+                <SvgIcon name="settings" size="24"/>
+                <span>Settings</span>
+            </router-link>
         </nav>
     </aside>
 </template>
@@ -49,10 +63,15 @@
             padding: 10px 20px;
             border-radius: 40px 0 0 40px;
             color: var(--text-main-color);
-            transition: all .3s ease;
+            transition: var(--transition);
 
             &.router-link-active {
+                color: var(--accent-color);
                 background-color: var(--content-color);
+            }
+
+            &:hover {
+                color: var(--accent-color);
             }
         }
     }

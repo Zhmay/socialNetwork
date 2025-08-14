@@ -1,12 +1,16 @@
-<script setup></script>
+<script setup>
+import SvgIcon from './SvgIcon.vue';
+</script>
 
 <template>
     <aside class="sidebar">
         <div class="sidebar__top">
-            <button class="add-post">+</button>
+            <button class="add-post">
+                <SvgIcon name="plus" size="20" />
+            </button>
             <div class="sidebar__user">
                 <div class="sidebar__user-img"></div>
-                <span class="sidebar__user-name">Username</span>
+                <span class="sidebar__user-name">Bogdan</span>
             </div>
         </div>
     </aside>
@@ -33,13 +37,15 @@
         }
 
         .add-post {
+            display: flex;
+            align-items: center;
+            justify-content: center;
             background-color: var(--accent-color);
-            color: white;
             border: none;
             border-radius: 50%;
             width: 32px;
             height: 32px;
-            font-size: 24px;
+            color: #fff;
             cursor: pointer;
         }
 

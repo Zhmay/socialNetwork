@@ -1,6 +1,7 @@
 <script setup>
   import Navbar from './components/common/Navbar.vue';
   import Sidebar from './components/common/Sidebar.vue';
+  import SvgSprite from './components/common/SvgSprite.vue';
 </script>
 
 <template>
@@ -12,6 +13,7 @@
       </div>
       <Sidebar/>
     </main>
+    <SvgSprite />
   </div>
 </template>
 
