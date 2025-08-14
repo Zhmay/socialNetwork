@@ -1,12 +1,10 @@
 <script setup>
-// Здесь позже будет логика для загрузки пользователей
+  import SearchBox from '@/components/common/SearchBox.vue';
 </script>
 
 <template>
   <div class="people">
-    <h1>Пользователи</h1>
-    <p>Все пользователи ZHNetwork</p>
-    
+    <SearchBox/>
     <!-- Здесь позже будет список пользователей -->
     <div class="users-placeholder">
       <div class="user-card">

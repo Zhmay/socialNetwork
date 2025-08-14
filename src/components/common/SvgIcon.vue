@@ -36,7 +36,6 @@ const iconStyles = computed(() => {
     :style="iconStyles"
     :aria-label="props.name"
   >
-    <!-- Используем простую ссылку на ID, без внешнего файла -->
     <use :href="`#icon-${props.name}`"></use>
   </svg>
 </template>
