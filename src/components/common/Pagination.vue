@@ -231,7 +231,7 @@ const goToLastPage = () => {
             cursor: not-allowed;
         }
 
-        &:hover:not([disabled]) {
+        &:hover:not(.pagination__btn--current, [disabled]) {
             color: var(--accent-color);
         }
     }

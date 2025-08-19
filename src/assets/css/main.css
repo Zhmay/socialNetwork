@@ -75,11 +75,15 @@ p {
     overflow: hidden;
 }
 
+
+
 .content {
     flex-shrink: 1;
     flex-grow: 1;
     padding: var(--container-padding);
     overflow-y: auto;
+    scrollbar-color: var(--border-color) var(--border-color);
+    scrollbar-width: thin;
 }
 
 a {
