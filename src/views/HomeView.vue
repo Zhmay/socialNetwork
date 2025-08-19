@@ -1,10 +1,24 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { usePostsStore } from '@/stores/posts'
+import { usePagination } from '@/composables/usePagination'
 import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
+import PostCard from '@/components/common/PostCard.vue'
 
 // Store
 const postsStore = usePostsStore()
+
+// Composables
+const { 
+  paginatedItems: paginatedPosts, 
+  currentPage, 
+  totalPages, 
+  setPage, 
+  nextPage, 
+  prevPage,
+  hasNextPage,
+  hasPrevPage
+} = usePagination(() => postsStore.filteredPosts, 10)
 
 // Локальное состояние для поиска
 const searchQuery = ref('')
@@ -14,12 +28,9 @@ const loadPosts = async () => {
   await postsStore.fetchAllPosts()
 }
 
-const toggleLike = (postId) => {
-  postsStore.toggleLike(postId)
-}
-
-const handleSearch = (query) => {
-  postsStore.setSearchQuery(query)
+const handleSearch = () => {
+  postsStore.setSearchQuery(searchQuery.value)
+  // Пагинация автоматически сбросится через реактивность filteredPosts
 }
 
 const handleClearSearch = () => {
@@ -27,9 +38,13 @@ const handleClearSearch = () => {
   postsStore.clearFilters()
 }
 
-// Автозагрузка при монтировании (опционально)
+const handlePostUpdated = (updatedPost) => {
+  console.log('Post updated:', updatedPost)
+}
+
+// Автозагрузка при монтировании
 onMounted(() => {
-  loadPosts()  // Загружаем посты при монтировании
+  loadPosts()
 })
 </script>
 
@@ -37,6 +52,24 @@ onMounted(() => {
   <div class="home">
     <div class="home-header">
       <h1>Главная страница</h1>
+      
+      <!-- Поиск -->
+      <div class="search-section">
+        <input 
+          v-model="searchQuery" 
+          @input="handleSearch"
+          type="text" 
+          placeholder="Поиск по постам..."
+          class="search-input"
+        >
+        <button 
+          v-if="searchQuery" 
+          @click="handleClearSearch"
+          class="clear-search-btn"
+        >
+          Очистить
+        </button>
+      </div>
     </div>
 
     <!-- Отображение ошибки -->
@@ -57,13 +90,13 @@ onMounted(() => {
 
       <!-- Загрузка поверх существующих данных -->
       <div v-else-if="postsStore.loading && postsStore.posts.length > 0" class="relative">
-        <div class="posts-preview">
-          <h3>Посты (обновляются...)</h3>
-          <div v-for="post in postsStore.posts.slice(0, 3)" :key="post.id" class="post-card-preview">
-            <h4>{{ post.title }}</h4>
-            <p>{{ post.body.substring(0, 100) }}...</p>
-            <small>👤 User {{ post.userId }} • ❤️ {{ post.likes }} лайков</small>
-          </div>
+        <div class="posts-grid">
+          <PostCard 
+            v-for="post in paginatedPosts.slice(0, 3)" 
+            :key="post.id" 
+            :post="post"
+            @post-updated="handlePostUpdated"
+          />
         </div>
         
         <!-- Overlay спиннер -->
@@ -77,38 +110,54 @@ onMounted(() => {
 
       <!-- Успешно загруженные данные -->
       <div v-else-if="postsStore.posts.length > 0" class="posts-loaded">
+        <!-- Статистика -->
         <div class="posts-stats">
-          <h3>Загружено постов: {{ postsStore.totalPosts }}</h3>
-          <p>Отфильтровано: {{ postsStore.filteredPosts.length }}</p>
-          <p>На странице: {{ postsStore.paginatedPosts.length }}</p>
+          <p>Всего постов: {{ postsStore.totalPosts }}</p>
+          <p>Найдено: {{ postsStore.filteredPosts.length }}</p>
+          <p>На странице: {{ paginatedPosts.length }}</p>
+          <p>Страница {{ currentPage }} из {{ totalPages }}</p>
         </div>
 
-        <!-- Список постов (предварительный) -->
-        <div class="posts-preview">
-          <h4>Первые 5 постов:</h4>
-          <div 
-            v-for="post in postsStore.paginatedPosts.slice(0, 5)" 
+        <!-- Список постов -->
+        <div class="posts-grid">
+          <PostCard 
+            v-for="post in paginatedPosts" 
             :key="post.id" 
-            class="post-card-preview"
+            :post="post"
+            @post-updated="handlePostUpdated"
+          />
+        </div>
+
+        <!-- Пагинация -->
+        <div v-if="totalPages > 1" class="pagination">
+          <button 
+            @click="prevPage"
+            :disabled="!hasPrevPage"
+            class="pagination-btn"
           >
-            <div class="post-header">
-              <h4>{{ post.title }}</h4>
-              <button 
-                @click="toggleLike(post.id)"
-                :class="['like-btn', { 'liked': post.isLiked }]"
-              >
-                ❤️ {{ post.likes }}
-              </button>
-            </div>
-            <p>{{ post.body }}</p>
-            <small>👤 User {{ post.userId }} • ID: {{ post.id }}</small>
+            ← Предыдущая
+          </button>
+          
+          <div class="pagination-info">
+            {{ currentPage }} / {{ totalPages }}
           </div>
+          
+          <button 
+            @click="nextPage"
+            :disabled="!hasNextPage"
+            class="pagination-btn"
+          >
+            Следующая →
+          </button>
         </div>
       </div>
 
       <!-- Пустое состояние -->
       <div v-else class="empty-state">
         <h3>Нет постов</h3>
+        <button @click="loadPosts" class="reload-btn">
+          Загрузить посты
+        </button>
       </div>
     </div>
   </div>
