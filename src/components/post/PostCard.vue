@@ -1,7 +1,7 @@
 <script setup>
 import { useLikes } from '@/composables/useLikes.js'
 import { usePostsStore } from '@/stores/posts.js'
-import SvgIcon from './SvgIcon.vue'
+import SvgIcon from '@/components/common/SvgIcon.vue'
 
 // Props
 const props = defineProps({
