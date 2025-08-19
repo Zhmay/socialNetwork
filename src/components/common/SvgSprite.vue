@@ -50,6 +50,6 @@
       <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
     </symbol>
 
-    
+    <symbol id="icon-arrow-small" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 14" ><path d="M1 1l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   </svg>
 </template>

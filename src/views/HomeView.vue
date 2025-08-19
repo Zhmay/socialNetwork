@@ -4,6 +4,7 @@ import { usePostsStore } from '@/stores/posts'
 import { usePagination } from '@/composables/usePagination'
 import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
 import PostCard from '@/components/common/PostCard.vue'
+import PaginationControls from '@/components/common/Pagination.vue'
 
 // Store
 const postsStore = usePostsStore()
@@ -40,6 +41,19 @@ const handleClearSearch = () => {
 
 const handlePostUpdated = (updatedPost) => {
   console.log('Post updated:', updatedPost)
+}
+
+// Методы пагинации
+const handlePageChange = (page) => {
+  setPage(page)
+}
+
+const handlePrevPage = () => {
+  prevPage()
+}
+
+const handleNextPage = () => {
+  nextPage()
 }
 
 // Автозагрузка при монтировании
@@ -129,27 +143,18 @@ onMounted(() => {
         </div>
 
         <!-- Пагинация -->
-        <div v-if="totalPages > 1" class="pagination">
-          <button 
-            @click="prevPage"
-            :disabled="!hasPrevPage"
-            class="pagination-btn"
-          >
-            ← Предыдущая
-          </button>
-          
-          <div class="pagination-info">
-            {{ currentPage }} / {{ totalPages }}
-          </div>
-          
-          <button 
-            @click="nextPage"
-            :disabled="!hasNextPage"
-            class="pagination-btn"
-          >
-            Следующая →
-          </button>
-        </div>
+        <PaginationControls
+          v-if="totalPages > 1"
+          :current-page="currentPage"
+          :total-pages="totalPages"
+          :has-next-page="hasNextPage"
+          :has-prev-page="hasPrevPage"
+          :show-page-numbers="true"
+          size="md"
+          @page-change="handlePageChange"
+          @prev-page="handlePrevPage"
+          @next-page="handleNextPage"
+        />
       </div>
 
       <!-- Пустое состояние -->
