@@ -79,6 +79,7 @@ p {
     flex-shrink: 1;
     flex-grow: 1;
     padding: var(--container-padding);
+    overflow-y: auto;
 }
 
 a {

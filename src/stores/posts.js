@@ -23,11 +23,6 @@ export const usePostsStore = defineStore('posts', () => {
   const filteredPosts = computed(() => {
     let filtered = posts.value
 
-    // Фильтр по пользователю
-    if (selectedUserId.value) {
-      filtered = filtered.filter((post) => post.userId === selectedUserId.value)
-    }
-
     // Поиск по тексту
     if (searchQuery.value.trim()) {
       const query = searchQuery.value.toLowerCase()
