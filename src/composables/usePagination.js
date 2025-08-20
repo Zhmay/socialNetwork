@@ -1,9 +1,15 @@
 // composables/usePagination.js
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 
-export function usePagination(items, itemsPerPage = 10) {
+export function usePagination(items, itemsPerPage = 10, options = {}) {
   const currentPage = ref(1)
   const perPage = ref(itemsPerPage)
+  
+  // Опции для настройки поведения
+  const { 
+    resetOnChange = true, // Сбрасывать ли пагинацию при изменении данных
+    debounceReset = 0     // Задержка для сброса (если нужна)
+  } = options
 
   // Поддерживаем как ref/reactive, так и функции
   const itemsValue = computed(() => {
@@ -39,6 +45,42 @@ export function usePagination(items, itemsPerPage = 10) {
   const hasNextPage = computed(() => currentPage.value < totalPages.value)
   const hasPrevPage = computed(() => currentPage.value > 1)
 
+  // Watcher для автоматического сброса пагинации
+  let resetTimeout = null
+
+  watch(
+    () => totalItems.value,
+    (newTotal, oldTotal) => {
+      // Сбрасываем пагинацию при изменении количества элементов
+      if (resetOnChange && newTotal !== oldTotal) {
+        // Очищаем предыдущий timeout если есть
+        if (resetTimeout) {
+          clearTimeout(resetTimeout)
+        }
+        
+        // Сбрасываем с задержкой если указана
+        if (debounceReset > 0) {
+          resetTimeout = setTimeout(() => {
+            resetPagination()
+          }, debounceReset)
+        } else {
+          resetPagination()
+        }
+      }
+    }
+  )
+
+  // ✨ Дополнительная проверка - если текущая страница больше общего количества
+  watch(
+    () => totalPages.value,
+    (newTotalPages) => {
+      // Если текущая страница больше доступных страниц, переходим на последнюю
+      if (currentPage.value > newTotalPages && newTotalPages > 0) {
+        currentPage.value = newTotalPages
+      }
+    }
+  )
+
   // Методы
   const setPage = (page) => {
     if (page >= 1 && page <= totalPages.value) {
@@ -67,6 +109,14 @@ export function usePagination(items, itemsPerPage = 10) {
     resetPagination()
   }
 
+  // Метод для временного отключения автосброса
+  const withoutAutoReset = (callback) => {
+    const originalReset = resetOnChange
+    resetOnChange = false
+    callback()
+    resetOnChange = originalReset
+  }
+
   return {
     // State
     currentPage,
@@ -84,6 +134,7 @@ export function usePagination(items, itemsPerPage = 10) {
     nextPage,
     prevPage,
     resetPagination,
-    setItemsPerPage
+    setItemsPerPage,
+    withoutAutoReset
   }
 }

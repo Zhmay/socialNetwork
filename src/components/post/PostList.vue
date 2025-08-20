@@ -26,10 +26,6 @@ const props = defineProps({
     type: Boolean,
     default: true
   },
-  emptyStateText: {
-    type: String,
-    default: 'Нет постов'
-  },
   loadingText: {
     type: String,
     default: 'Загружаем посты...'
@@ -113,13 +109,6 @@ const handleNextPage = () => {
 
     <!-- Успешно загруженные данные -->
     <div v-else-if="posts.length > 0" class="posts-loaded">
-      <!-- Статистика -->
-      <div v-if="showStats" class="posts-stats">
-        <p>Всего постов: {{ posts.length }}</p>
-        <p>На странице: {{ paginatedPosts.length }}</p>
-        <p>Страница {{ currentPage }} из {{ totalPages }}</p>
-      </div>
-
       <!-- Список постов -->
       <div class="posts-list">
         <PostCard 
@@ -145,13 +134,6 @@ const handleNextPage = () => {
       />
     </div>
 
-    <!-- Пустое состояние -->
-    <div v-else class="empty-state">
-      <h3>{{ emptyStateText }}</h3>
-      <button @click="handleReload" class="reload-btn">
-        Загрузить посты
-      </button>
-    </div>
   </div>
 </template>
 

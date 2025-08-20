@@ -1,26 +1,30 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { usePostsStore } from '@/stores/posts'
 import PostList from '@/components/post/PostList.vue'
+import SearchBox from '@/components/common/SearchBox.vue'
 
 // Store
 const postsStore = usePostsStore()
 
-// Локальное состояние для поиска
-const searchQuery = ref('')
+// Computed для передачи в SearchBox
+const searchResults = computed(() => ({
+  total: postsStore.filteredPosts.length,
+  query: postsStore.searchQuery,
+  isSearching: postsStore.loading
+}))
 
 // Методы
 const loadPosts = async () => {
   await postsStore.fetchAllPosts()
 }
 
-const handleSearch = () => {
-  postsStore.setSearchQuery(searchQuery.value)
-}
-
-const handleClearSearch = () => {
-  searchQuery.value = ''
-  postsStore.clearFilters()
+const handleSearch = (query) => {
+  if (query.trim() === '') {
+    postsStore.clearFilters()
+  } else {
+    postsStore.setSearchQuery(query)
+  }
 }
 
 const handlePostUpdated = (updatedPost) => {
@@ -40,25 +44,13 @@ onMounted(() => {
 <template>
   <div class="home">
     <div class="home-header">
-      <h1>Главная страница</h1>
-      
-      <!-- Поиск -->
-      <div class="search-section">
-        <input 
-          v-model="searchQuery" 
-          @input="handleSearch"
-          type="text" 
-          placeholder="Поиск по постам..."
-          class="search-input"
-        >
-        <button 
-          v-if="searchQuery" 
-          @click="handleClearSearch"
-          class="clear-search-btn"
-        >
-          Очистить
-        </button>
-      </div>
+      <SearchBox
+        :model-value="postsStore.searchQuery"
+        placeholder="Поиск по постам..."
+        :debounce="400"
+        :search-results="searchResults"
+        @search="handleSearch"
+      />
     </div>
 
     <PostList 
@@ -74,7 +66,3 @@ onMounted(() => {
     />
   </div>
 </template>
-
-<style scoped>
-/* Стили добавишь сам */
-</style>
