@@ -28,7 +28,7 @@ const props = defineProps({
   },
   loadingText: {
     type: String,
-    default: 'Загружаем посты...'
+    default: 'Loading...'
   }
 })
 
@@ -87,7 +87,6 @@ const handleNextPage = () => {
       :text="loadingText"
     />
 
-    <!-- Загрузка поверх существующих данных -->
     <div v-else-if="loading && posts.length > 0" class="relative">
       <div class="posts-list">
         <PostCard 
@@ -98,18 +97,15 @@ const handleNextPage = () => {
         />
       </div>
       
-      <!-- Overlay спиннер -->
       <LoadingSpinner 
         class="loading-spinner--overlay" 
         size="md"
         show-text
-        text="Обновляем..."
+        text="Updating..."
       />
     </div>
 
-    <!-- Успешно загруженные данные -->
     <div v-else-if="posts.length > 0" class="posts-loaded">
-      <!-- Список постов -->
       <div class="posts-list">
         <PostCard 
           v-for="post in paginatedPosts" 
@@ -119,7 +115,6 @@ const handleNextPage = () => {
         />
       </div>
 
-      <!-- Пагинация -->
       <Pagination
         v-if="totalPages > 1"
         :current-page="currentPage"

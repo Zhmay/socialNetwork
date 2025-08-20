@@ -46,7 +46,7 @@ onMounted(() => {
     <div class="home-header">
       <SearchBox
         :model-value="postsStore.searchQuery"
-        placeholder="Поиск по постам..."
+        placeholder="Search by title, content..."
         :debounce="400"
         :search-results="searchResults"
         @search="handleSearch"
@@ -59,8 +59,6 @@ onMounted(() => {
       :error="postsStore.error"
       :posts-per-page="14"
       :show-stats="true"
-      empty-state-text="Посты не найдены"
-      loading-text="Загружаем посты..."
       @post-updated="handlePostUpdated"
       @reload="handleReload"
     />
