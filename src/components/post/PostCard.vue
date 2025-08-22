@@ -2,6 +2,7 @@
 import { useLikes } from '@/composables/useLikes.js'
 import { usePostsStore } from '@/stores/posts.js'
 import SvgIcon from '@/components/common/SvgIcon.vue'
+import HighlightedText from '@/components/common/HighlightedText.vue'
 
 // Props
 const props = defineProps({
@@ -33,8 +34,25 @@ const handleLike = () => {
 
 <template>
   <div class="post">
-    <div class="post__title">{{ post.title }}</div>
-    <div class="post__content">{{ post.body }}</div>
+    <div class="post__title">
+      <HighlightedText 
+        :text="post.title" 
+        :query="postsStore.searchQuery"
+        tag="span"
+        :case-sensitive="false"
+        :whole-words="true"
+      />
+    </div>
+    <div class="post__content">
+      <HighlightedText 
+        :text="post.body" 
+        :query="postsStore.searchQuery"
+        tag="p"
+        :show-excerpt="!!postsStore.searchQuery"
+        :max-length="200"
+        :context-padding="40"
+      />
+    </div>
     <div class="post__footer">
       <div class="post__user">
         <div class="post__user-img">
