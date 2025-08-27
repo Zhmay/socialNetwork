@@ -1,4 +1,5 @@
 <script setup>
+import { useRouter } from 'vue-router'
 import { useLikes } from '@/composables/useLikes.js'
 import { usePostsStore } from '@/stores/posts.js'
 import SvgIcon from '@/components/common/SvgIcon.vue'
@@ -9,6 +10,10 @@ const props = defineProps({
   post: {
     type: Object,
     required: true
+  },
+  currentPage: {
+    type: Number,
+    default: 1
   }
 })
 
@@ -16,6 +21,7 @@ const props = defineProps({
 const emit = defineEmits(['post-updated'])
 
 // Composables
+const router = useRouter()
 const { togglePostLike } = useLikes()
 const postsStore = usePostsStore()
 
@@ -30,11 +36,26 @@ const handleLike = () => {
   emit('post-updated', updatedPost)
 }
 
+const goToPostDetail = () => {
+  // Получаем текущий маршрут для сохранения контекста
+  const currentRoute = router.currentRoute.value
+  
+  router.push({ 
+    name: 'post-detail', 
+    params: { id: props.post.id },
+    query: {
+      ...currentRoute.query,
+      from: currentRoute.name,
+      page: props.currentPage // Используем prop
+    }
+  })
+}
+
 </script>
 
 <template>
   <div class="post">
-    <div class="post__title">
+    <div class="post__title" @click="goToPostDetail">
       <HighlightedText 
         :text="post.title" 
         :query="postsStore.searchQuery"
@@ -81,9 +102,16 @@ const handleLike = () => {
   background-color: #fff;
 
   &__title {
+    display: inline-flex;
     font-weight: 700;
     margin-bottom: 8px;
     text-transform: capitalize;
+    cursor: pointer;
+    transition: var(--transition);
+
+    &:hover {
+      color: var(--accent-color);
+    }
   }
 
   &__content {

@@ -1,4 +1,5 @@
 <script setup>
+import { useRoute, useRouter } from 'vue-router'
 import { usePagination } from '@/composables/usePagination'
 import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
 import PostCard from '@/components/post/PostCard.vue'
@@ -32,6 +33,9 @@ const props = defineProps({
   }
 })
 
+const route = useRoute()
+const router = useRouter()
+
 // Emits
 const emit = defineEmits(['post-updated', 'reload'])
 
@@ -59,15 +63,40 @@ const handleReload = () => {
 // Методы пагинации
 const handlePageChange = (page) => {
   setPage(page)
+  // Обновляем URL
+  router.push({ 
+    query: { ...route.query, page: page > 1 ? page : undefined } 
+  })
+
 }
 
 const handlePrevPage = () => {
   prevPage()
+  const newPage = currentPage.value
+  router.push({ 
+    query: { ...route.query, page: newPage > 1 ? newPage : undefined } 
+  })
 }
 
 const handleNextPage = () => {
   nextPage()
+  const newPage = currentPage.value
+  router.push({ 
+    query: { ...route.query, page: newPage > 1 ? newPage : undefined } 
+  })
 }
+
+const setPageFromUrl = (page) => {
+  console.log('Setting page from URL:', page) // Для отладки
+  if (page >= 1 && page <= totalPages.value) {
+    setPage(page)
+  }
+}
+
+// Expose метод для родительского компонента
+defineExpose({
+  setPageFromUrl
+})
 </script>
 
 <template>
@@ -93,6 +122,7 @@ const handleNextPage = () => {
           v-for="post in paginatedPosts.slice(0, 3)" 
           :key="post.id" 
           :post="post"
+          :current-page="currentPage"
           @post-updated="handlePostUpdated"
         />
       </div>
@@ -111,6 +141,7 @@ const handleNextPage = () => {
           v-for="post in paginatedPosts" 
           :key="post.id" 
           :post="post"
+          :current-page="currentPage"
           @post-updated="handlePostUpdated"
         />
       </div>

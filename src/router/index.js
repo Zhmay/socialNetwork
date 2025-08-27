@@ -4,6 +4,7 @@ import HomeView from '@/views/HomeView.vue'
 import PeopleView from '@/views/PeopleView.vue'
 import MessagesView from '@/views/MessagesView.vue'
 import SettingsView from '@/views/SettingsView.vue'
+import PostDetailView from '@/views/PostDetailView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -27,6 +28,12 @@ const router = createRouter({
       path: '/settings', 
       name: 'settings',
       component: SettingsView
+    },
+    {
+      path: '/post/:id',
+      name: 'post-detail',
+      component: PostDetailView,
+      props: route => ({ id: Number(route.params.id) })
     },
     // Fallback для несуществующих маршрутов
     {
