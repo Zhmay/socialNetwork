@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import { usePostsStore } from '@/stores/posts.js'
 import PostDetail from '@/components/post/PostDetail.vue'
 import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
+import SvgIcon from '@/components/common/SvgIcon.vue'
 
 // Props от роутера
 const props = defineProps({
@@ -62,11 +63,9 @@ onUnmounted(() => {
 <template>
   <div class="post-detail-view">
     <!-- Навигация -->
-    <div class="post-detail-view__header">
-      <button @click="goBack" class="post-detail-view__back-btn">
-        ← Назад
-      </button>
-    </div>
+    <button @click="goBack" class="post-detail-view__back-btn">
+      <SvgIcon name="arrow-small" size="14" />
+    </button>
 
     <!-- Контент -->
     <div class="post-detail-view__content">
@@ -88,6 +87,32 @@ onUnmounted(() => {
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
+  .post-detail-view {
 
+    &__back-btn {
+      position: absolute;
+      top: 30px;
+      left: 30px;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border: none;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 50%;
+      box-shadow: var(--box-shadow);
+      cursor: pointer;
+      color: var(--accent-color);
+      transform: rotate(180deg);
+      transition: background 0.3s, box-shadow 0.3s;
+
+      &:hover {
+        background: rgba(255, 255, 255, 1);
+        color: var(--accent-color);
+      }
+    }
+  }
 </style>
