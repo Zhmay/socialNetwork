@@ -9,28 +9,28 @@ import Pagination from '@/components/common/Pagination.vue'
 const props = defineProps({
   posts: {
     type: Array,
-    default: () => []
+    default: () => [],
   },
   loading: {
     type: Boolean,
-    default: false
+    default: false,
   },
   error: {
     type: String,
-    default: null
+    default: null,
   },
   postsPerPage: {
     type: Number,
-    default: 10
+    default: 10,
   },
   showStats: {
     type: Boolean,
-    default: true
+    default: true,
   },
   loadingText: {
     type: String,
-    default: 'Loading...'
-  }
+    default: 'Loading...',
+  },
 })
 
 const route = useRoute()
@@ -40,15 +40,15 @@ const router = useRouter()
 const emit = defineEmits(['post-updated', 'reload'])
 
 // Composables
-const { 
-  paginatedItems: paginatedPosts, 
-  currentPage, 
-  totalPages, 
-  setPage, 
-  nextPage, 
+const {
+  paginatedItems: paginatedPosts,
+  currentPage,
+  totalPages,
+  setPage,
+  nextPage,
   prevPage,
   hasNextPage,
-  hasPrevPage
+  hasPrevPage,
 } = usePagination(() => props.posts, props.postsPerPage)
 
 // Методы
@@ -63,27 +63,54 @@ const handleReload = () => {
 // Методы пагинации
 const handlePageChange = (page) => {
   setPage(page)
-  // Обновляем URL
-  router.push({ 
-    query: { ...route.query, page: page > 1 ? page : undefined } 
-  })
-
+  // Обновляем URL, убираем page=1
+  const query = { ...route.query }
+  if (page > 1) {
+    query.page = page
+  } else {
+    delete query.page // Убираем параметр page если это первая страница
+  }
+  router.push({ query })
 }
+
+// const handlePrevPage = () => {
+//   prevPage()
+//   const newPage = currentPage.value
+//   router.push({
+//     query: { ...route.query, page: newPage > 1 ? newPage : undefined }
+//   })
+// }
 
 const handlePrevPage = () => {
   prevPage()
   const newPage = currentPage.value
-  router.push({ 
-    query: { ...route.query, page: newPage > 1 ? newPage : undefined } 
-  })
+  const query = { ...route.query }
+  if (newPage > 1) {
+    query.page = newPage
+  } else {
+    delete query.page
+  }
+  router.push({ query })
 }
+
+// const handleNextPage = () => {
+//   nextPage()
+//   const newPage = currentPage.value
+//   router.push({
+//     query: { ...route.query, page: newPage > 1 ? newPage : undefined }
+//   })
+// }
 
 const handleNextPage = () => {
   nextPage()
   const newPage = currentPage.value
-  router.push({ 
-    query: { ...route.query, page: newPage > 1 ? newPage : undefined } 
-  })
+  const query = { ...route.query }
+  if (newPage > 1) {
+    query.page = newPage
+  } else {
+    delete query.page
+  }
+  router.push({ query })
 }
 
 const setPageFromUrl = (page) => {
@@ -95,7 +122,7 @@ const setPageFromUrl = (page) => {
 
 // Expose метод для родительского компонента
 defineExpose({
-  setPageFromUrl
+  setPageFromUrl,
 })
 </script>
 
@@ -108,38 +135,33 @@ defineExpose({
   <!-- Состояния загрузки и данных -->
   <div class="content-area">
     <!-- Полноэкранная загрузка (первая загрузка) -->
-    <LoadingSpinner 
+    <LoadingSpinner
       v-if="loading && posts.length === 0"
       center
-      size="lg" 
-      show-text 
+      size="lg"
+      show-text
       :text="loadingText"
     />
 
     <div v-else-if="loading && posts.length > 0" class="relative">
       <div class="posts-list">
-        <PostCard 
-          v-for="post in paginatedPosts.slice(0, 3)" 
-          :key="post.id" 
+        <PostCard
+          v-for="post in paginatedPosts.slice(0, 3)"
+          :key="post.id"
           :post="post"
           :current-page="currentPage"
           @post-updated="handlePostUpdated"
         />
       </div>
-      
-      <LoadingSpinner 
-        class="loading-spinner--overlay" 
-        size="md"
-        show-text
-        text="Updating..."
-      />
+
+      <LoadingSpinner class="loading-spinner--overlay" size="md" show-text text="Updating..." />
     </div>
 
     <div v-else-if="posts.length > 0" class="posts-loaded">
       <div class="posts-list">
-        <PostCard 
-          v-for="post in paginatedPosts" 
-          :key="post.id" 
+        <PostCard
+          v-for="post in paginatedPosts"
+          :key="post.id"
           :post="post"
           :current-page="currentPage"
           @post-updated="handlePostUpdated"
@@ -159,7 +181,6 @@ defineExpose({
         @next-page="handleNextPage"
       />
     </div>
-
   </div>
 </template>
 

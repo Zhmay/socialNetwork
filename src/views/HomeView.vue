@@ -1,12 +1,13 @@
 <script setup>
 import { ref, onMounted, computed, watch, nextTick } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { usePostsStore } from '@/stores/posts'
 import PostList from '@/components/post/PostList.vue'
 import SearchBox from '@/components/common/SearchBox.vue'
 
 // Router
 const route = useRoute()
+const router = useRouter()
 
 // Store
 const postsStore = usePostsStore()
@@ -19,7 +20,7 @@ const isPostsLoaded = ref(false)
 const searchResults = computed(() => ({
   total: postsStore.filteredPosts.length,
   query: postsStore.searchQuery,
-  isSearching: postsStore.loading
+  isSearching: postsStore.loading,
 }))
 
 // Методы
@@ -53,13 +54,13 @@ const handleReload = () => {
 
 // Отслеживаем изменения query параметров только после загрузки постов
 watch(
-  () => route.query.page,
-  (newPage) => {
-    if (isPostsLoaded.value && newPage && postListRef.value) {
-      const page = parseInt(newPage) || 1
-      postListRef.value.setPageFromUrl(page)
+  () => route.fullPath,
+  (newPath, oldPath) => {
+    // Если перешли на чистый "/" с другого пути
+    if (newPath === '/' && oldPath !== '/' && postListRef.value) {
+      postListRef.value.setPageFromUrl(1)
     }
-  }
+  },
 )
 
 // Автозагрузка при монтировании
@@ -80,7 +81,7 @@ onMounted(() => {
       />
     </div>
 
-    <PostList 
+    <PostList
       ref="postListRef"
       :posts="postsStore.filteredPosts"
       :loading="postsStore.loading"
