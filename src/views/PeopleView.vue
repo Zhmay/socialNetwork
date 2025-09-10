@@ -6,8 +6,7 @@ import UserList from '@/components/user/UserList.vue'
 <template>
   <div class="people">
     <SearchBox />
-    <!-- Здесь позже будет список пользователей -->
-    <UserList />
+    <UserList :loadingText="'Loading users...'" />
   </div>
 </template>
 

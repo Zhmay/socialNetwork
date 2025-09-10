@@ -30,7 +30,7 @@ onMounted(async () => {
   </div>
 
   <!-- Состояния загрузки и данных -->
-  <LoadingSpinner v-if="usersStore.loading" :text="loadingText" />
+  <LoadingSpinner v-if="usersStore.loading" center size="lg" show-text :text="props.loadingText" />
 
   <div v-else-if="usersStore.users.length > 0" class="users-list">
     <UserCard v-for="user in usersStore.users" :key="user.id" :user="user" />

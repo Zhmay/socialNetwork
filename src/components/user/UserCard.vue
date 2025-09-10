@@ -56,6 +56,12 @@ const goToProfile = () => {
   cursor: pointer;
   transition: var(--transition);
 
+  &:hover {
+    .user-card__name {
+      color: var(--accent-color);
+    }
+  }
+
   &__avatar {
     width: 80px;
     height: 80px;
@@ -76,6 +82,7 @@ const goToProfile = () => {
     font-size: 16px;
     font-weight: 700;
     margin-bottom: 5px;
+    transition: var(--transition);
   }
 
   &__username {
