@@ -1,7 +1,6 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import { useUsersStore } from '@/stores/users.js'
-import SvgIcon from '@/components/common/SvgIcon.vue'
 import HighlightedText from '@/components/common/HighlightedText.vue'
 
 // Props
@@ -36,9 +35,14 @@ const goToProfile = () => {
 }
 </script>
 <template>
-  <div class="user-card">
+  <div class="user-card" @click="goToProfile">
     <div class="user-card__avatar">
-      <SvgIcon name="user" size="36" />
+      <template v-if="user.avatar">
+        <img :src="user.avatar" :alt="user.name" />
+      </template>
+      <template v-else>
+        <span class="user__avatar-initials">{{ user.name.charAt(0) }}</span>
+      </template>
     </div>
     <div class="user-card__name">
       {{ user.name }}
@@ -72,6 +76,8 @@ const goToProfile = () => {
     justify-content: center;
     color: var(--accent-color);
     margin: 0 auto 10px;
+    font-size: 24px;
+    font-weight: 600;
 
     svg {
       fill: var(--accent-color);

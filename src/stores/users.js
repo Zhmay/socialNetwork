@@ -50,9 +50,18 @@ export const useUsersStore = defineStore('users', () => {
     }
   }
 
+  const clearCurrentUser = () => {
+    currentUser.value = null
+  }
+
+  const clearError = () => {
+    error.value = null
+  }
+
   return {
     // State
     users,
+    currentUser,
     loading,
     error,
 
@@ -63,5 +72,7 @@ export const useUsersStore = defineStore('users', () => {
     // Actions
     fetchAllUsers,
     fetchUserById,
+    clearCurrentUser,
+    clearError,
   }
 })

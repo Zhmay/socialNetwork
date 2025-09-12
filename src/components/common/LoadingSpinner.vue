@@ -5,38 +5,45 @@ defineProps({
   size: {
     type: String,
     default: 'md',
-    validator: (value) => ['sm', 'md', 'lg'].includes(value)
+    validator: (value) => ['sm', 'md', 'lg'].includes(value),
   },
-  
+
   // Показывать ли текст загрузки
   showText: {
     type: Boolean,
-    default: false
+    default: false,
   },
-  
+
   // Текст загрузки
   text: {
     type: String,
-    default: 'Загрузка...'
+    default: 'Загрузка...',
   },
-  
+
   // Центрировать спиннер (для полноэкранной загрузки)
   center: {
     type: Boolean,
-    default: false
+    default: false,
   },
-  
+
   // Цвет спиннера (accent, default, white)
   color: {
     type: String,
     default: 'accent',
-    validator: (value) => ['accent', 'default', 'white'].includes(value)
-  }
+    validator: (value) => ['accent', 'default', 'white'].includes(value),
+  },
 })
 </script>
 
 <template>
-  <div :class="['loading-spinner', `loading-spinner--${size}`, { 'loading-spinner--center': center }]">
+  <div
+    :class="[
+      'loading-spinner',
+      `loading-spinner--${size}`,
+      { 'loading-spinner--center': center },
+      `loading-spinner--color-${color}`,
+    ]"
+  >
     <div class="loading-spinner__circle"></div>
     <p v-if="showText" class="loading-spinner__text">{{ text }}</p>
   </div>
@@ -88,7 +95,11 @@ defineProps({
 /* Цвета спиннера */
 .loading-spinner__circle {
   border-color: var(--border-color);
-  border-top-color: var(--accent);
+  border-top-color: var(--accent-color);
+}
+
+.loading-spinner--color-accent .loading-spinner__circle {
+  border-top-color: var(--accent-color);
 }
 
 .loading-spinner--color-default .loading-spinner__circle {
@@ -112,11 +123,11 @@ defineProps({
 }
 
 @keyframes spin {
-  0% { 
-    transform: rotate(0deg); 
+  0% {
+    transform: rotate(0deg);
   }
-  100% { 
-    transform: rotate(360deg); 
+  100% {
+    transform: rotate(360deg);
   }
 }
 
