@@ -7,6 +7,7 @@ export const useUsersStore = defineStore('users', () => {
   // === STATE ===
   const users = ref([])
   const currentUser = ref(null)
+  const userPosts = ref([])
   const loading = ref(false)
   const error = ref(null)
 
@@ -58,10 +59,32 @@ export const useUsersStore = defineStore('users', () => {
     error.value = null
   }
 
+  const fetchUserPosts = async (userId) => {
+    loading.value = true
+    error.value = null
+
+    try {
+      const response = await usersService.getUserPosts(userId)
+      userPosts.value = response.data
+      return response.data
+    } catch (err) {
+      error.value = 'Ошибка загрузки постов пользователя: ' + err.message
+      console.error('Error fetching user posts:', err)
+      return []
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const clearUserPosts = () => {
+    userPosts.value = []
+  }
+
   return {
     // State
     users,
     currentUser,
+    userPosts,
     loading,
     error,
 
@@ -74,5 +97,7 @@ export const useUsersStore = defineStore('users', () => {
     fetchUserById,
     clearCurrentUser,
     clearError,
+    fetchUserPosts,
+    clearUserPosts,
   }
 })

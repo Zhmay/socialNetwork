@@ -5,6 +5,7 @@ import { useUsersStore } from '@/stores/users.js'
 import UserDetail from '@/components/user/UserDetail.vue'
 import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
 import SvgIcon from '@/components/common/SvgIcon.vue'
+import PostCard from '@/components/post/PostCard.vue'
 
 const props = defineProps({
   id: {
@@ -18,10 +19,12 @@ const usersStore = useUsersStore()
 
 onMounted(async () => {
   await usersStore.fetchUserById(props.id)
+  await usersStore.fetchUserPosts(props.id)
 })
 
 onUnmounted(() => {
   usersStore.clearCurrentUser()
+  usersStore.clearUserPosts()
 })
 
 const goBack = () => {
@@ -48,7 +51,26 @@ const goBack = () => {
     </div>
 
     <!-- Пользователь найден -->
-    <UserDetail v-else-if="usersStore.currentUser" :user="usersStore.currentUser" />
+    <template v-else-if="usersStore.currentUser">
+      <UserDetail :user="usersStore.currentUser" />
+
+      <div class="user-posts-section">
+        <h3 class="user-posts-section__title">Users posts ({{ usersStore.userPosts.length }})</h3>
+
+        <div v-if="usersStore.userPosts.length > 0" class="user-posts-list">
+          <PostCard
+            v-for="post in usersStore.userPosts"
+            :key="post.id"
+            :post="post"
+            :hide-author="true"
+          />
+        </div>
+
+        <div v-else class="no-posts-message">
+          <p>User has no posts</p>
+        </div>
+      </div>
+    </template>
 
     <!-- Если пользователь не найден -->
     <div v-else class="error-message">
