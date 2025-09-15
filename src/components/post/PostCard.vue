@@ -105,7 +105,7 @@ const goToUserProfile = () => {
         :context-padding="40"
       />
     </div>
-    <div class="post__footer">
+    <div class="post__footer" :class="{ 'post__footer--no-author': hideAuthor }">
       <div v-if="!hideAuthor" class="post__user" @click="goToUserProfile">
         <div class="post__user-img">
           <template v-if="postAuthor?.avatar">
@@ -160,12 +160,17 @@ const goToUserProfile = () => {
     justify-content: space-between;
     align-items: center;
     grid-gap: 10px;
+
+    &--no-author {
+      justify-content: flex-end;
+    }
   }
 
   &__user {
     display: flex;
     align-items: center;
     grid-gap: 10px;
+    cursor: pointer;
 
     &-img {
       width: 40px;
@@ -186,6 +191,10 @@ const goToUserProfile = () => {
     span {
       font-weight: 500;
       color: var(--text-main-color);
+    }
+
+    &:hover span {
+      color: var(--accent-color);
     }
   }
 

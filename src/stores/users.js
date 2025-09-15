@@ -2,6 +2,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { usersService } from '@/services/users.service.js'
+import { useLikes } from '@/composables/useLikes.js'
 
 export const useUsersStore = defineStore('users', () => {
   // === STATE ===
@@ -65,8 +66,12 @@ export const useUsersStore = defineStore('users', () => {
 
     try {
       const response = await usersService.getUserPosts(userId)
-      userPosts.value = response.data
-      return response.data
+      // Инициализируем лайки для каждого поста
+      const { initializePostLikes } = useLikes()
+      const postsWithLikes = response.data.map((post) => initializePostLikes(post))
+
+      userPosts.value = postsWithLikes
+      return postsWithLikes
     } catch (err) {
       error.value = 'Ошибка загрузки постов пользователя: ' + err.message
       console.error('Error fetching user posts:', err)
