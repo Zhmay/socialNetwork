@@ -1,13 +1,14 @@
 <script setup>
 import { useLikes } from '@/composables/useLikes.js'
 import SvgIcon from '@/components/common/SvgIcon.vue'
+import userItem from '@/components/common/userItem.vue'
 
 // Props
 const props = defineProps({
   post: {
     type: Object,
-    required: true
-  }
+    required: true,
+  },
 })
 
 // Emits
@@ -28,8 +29,8 @@ const handleLike = () => {
     <!-- Заголовок -->
     <div class="post__hero">
       <div class="post__hero-img">
-        <img src="@/assets/img/post-img.webp" alt="">
-        <button 
+        <img src="@/assets/img/post-img.webp" alt="" />
+        <button
           @click="handleLike"
           :class="['post__like-btn', { 'post__like-btn--liked': post.isLiked }]"
           :title="post.isLiked ? 'Unlike' : 'Like'"
@@ -44,25 +45,42 @@ const handleLike = () => {
     <!-- Контент поста -->
     <div class="post__content">
       <p class="post__text">{{ post.body }}</p>
-      <p class="post__text">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Odit, in cum autem quam provident nulla ex ipsa voluptatum fuga officia laudantium possimus natus eligendi magnam quod obcaecati odio hic velit.</p>
-      <p class="post__text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod.</p>
-      <p class="post__text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempore dolor ab alias cumque commodi soluta distinctio consectetur quos? Ullam earum ratione est pariatur omnis libero amet. Quo placeat libero illum, repellat nam quasi iure provident maiores. Quaerat, velit at. Sunt cupiditate distinctio expedita laborum est impedit quidem iusto atque, asperiores eligendi mollitia, dolores unde saepe, nostrum magnam et veniam. Voluptatum?</p>
-      <p class="post__text">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quod minus exercitationem dolorum eaque sunt nihil magni consequuntur velit unde voluptatem, cumque doloremque officiis laborum magnam quam, impedit architecto alias animi provident hic error. Ipsa molestias unde mollitia totam eos similique, natus, minima illum molestiae repellendus ducimus hic! Mollitia, ex. Consectetur, vitae delectus, consequatur dignissimos nulla iste harum voluptas voluptates soluta assumenda culpa sunt nisi consequuntur officia facere a laudantium recusandae velit corrupti dolorem maiores eius. Tenetur vitae at corrupti quidem aspernatur sunt omnis, dignissimos est, repellat, ea provident enim! Accusamus unde quisquam aut quibusdam impedit quae quo, maiores eaque similique.</p>
+      <p class="post__text">
+        Lorem, ipsum dolor sit amet consectetur adipisicing elit. Odit, in cum autem quam provident
+        nulla ex ipsa voluptatum fuga officia laudantium possimus natus eligendi magnam quod
+        obcaecati odio hic velit.
+      </p>
+      <p class="post__text">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod.
+      </p>
+      <p class="post__text">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempore dolor ab alias cumque
+        commodi soluta distinctio consectetur quos? Ullam earum ratione est pariatur omnis libero
+        amet. Quo placeat libero illum, repellat nam quasi iure provident maiores. Quaerat, velit
+        at. Sunt cupiditate distinctio expedita laborum est impedit quidem iusto atque, asperiores
+        eligendi mollitia, dolores unde saepe, nostrum magnam et veniam. Voluptatum?
+      </p>
+      <p class="post__text">
+        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quod minus exercitationem dolorum
+        eaque sunt nihil magni consequuntur velit unde voluptatem, cumque doloremque officiis
+        laborum magnam quam, impedit architecto alias animi provident hic error. Ipsa molestias unde
+        mollitia totam eos similique, natus, minima illum molestiae repellendus ducimus hic!
+        Mollitia, ex. Consectetur, vitae delectus, consequatur dignissimos nulla iste harum voluptas
+        voluptates soluta assumenda culpa sunt nisi consequuntur officia facere a laudantium
+        recusandae velit corrupti dolorem maiores eius. Tenetur vitae at corrupti quidem aspernatur
+        sunt omnis, dignissimos est, repellat, ea provident enim! Accusamus unde quisquam aut
+        quibusdam impedit quae quo, maiores eaque similique.
+      </p>
     </div>
 
-    <div class="post__author">
-      <div class="post__author-avatar">
-        <SvgIcon name="user" size="24" />
-      </div>
-      <span class="post__author-name">Username {{ post.userId }}</span>
+    <div class="post__bottom">
+      <userItem :post="post" />
     </div>
-
   </article>
 </template>
 
 <style scoped lang="scss">
 .post {
-
   &__hero {
     position: relative;
     margin-bottom: 20px;
@@ -75,7 +93,9 @@ const handleLike = () => {
     border-radius: var(--border-radius);
     overflow: hidden;
     margin-bottom: 20px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.1);
+    box-shadow:
+      0 1px 3px rgba(0, 0, 0, 0.3),
+      0 1px 2px rgba(0, 0, 0, 0.1);
 
     img {
       width: 100%;
@@ -137,30 +157,12 @@ const handleLike = () => {
     }
   }
 
-  &__author {
+  &__bottom {
     display: flex;
-    align-items: center;
     justify-content: flex-end;
-    grid-gap: 10px;
     margin-top: 20px;
     border-top: 1px solid var(--border-color);
     padding-top: 15px;
-
-    &-avatar {
-      width: 40px;
-      height: 40px;
-      background-color: var(--border-color);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--accent-color);
-    }
-
-    &-name {
-      font-weight: 500;
-      color: var(--text-main-color);
-    }
-  } 
+  }
 }
 </style>

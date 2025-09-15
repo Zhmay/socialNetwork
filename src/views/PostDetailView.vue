@@ -20,24 +20,26 @@ const postsStore = usePostsStore()
 
 // Методы
 const goBack = () => {
-  const currentRoute = router.currentRoute.value
+  // const currentRoute = router.currentRoute.value
 
-  if (currentRoute.query.from) {
-    const query = { ...currentRoute.query }
-    delete query.from // Убираем служебный параметр
+  // if (currentRoute.query.from) {
+  //   const query = { ...currentRoute.query }
+  //   delete query.from // Убираем служебный параметр
 
-    // Если page=1, убираем его из URL
-    if (query.page === '1') {
-      delete query.page
-    }
+  //   // Если page=1, убираем его из URL
+  //   if (query.page === '1') {
+  //     delete query.page
+  //   }
 
-    router.push({
-      name: currentRoute.query.from,
-      query,
-    })
-  } else {
-    router.back()
-  }
+  //   router.push({
+  //     name: currentRoute.query.from,
+  //     query,
+  //   })
+  // } else {
+  //   router.back()
+  // }
+
+  router.back()
 }
 
 // Lifecycle
