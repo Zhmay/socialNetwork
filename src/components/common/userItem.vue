@@ -48,7 +48,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div v-if="!hideAuthor" class="user" @click.stop="goToUserProfile">
+  <div v-if="!hideAuthor" class="user user--link" @click.stop="goToUserProfile">
     <div class="user-img">
       <template v-if="postAuthor?.avatar">
         <img :src="postAuthor?.avatar" :alt="postAuthor?.name" />
@@ -60,38 +60,3 @@ onMounted(async () => {
     <span>{{ postAuthor?.name || `User ${post.userId}` }}</span>
   </div>
 </template>
-
-<style lang="scss" scoped>
-.user {
-  display: inline-flex;
-  align-items: center;
-  grid-gap: 10px;
-  cursor: pointer;
-
-  &-img {
-    width: 40px;
-    height: 40px;
-    background-color: var(--border-color);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--accent-color);
-
-    div {
-      font-weight: 600;
-      color: var(--accent-color);
-    }
-  }
-
-  span {
-    font-weight: 500;
-    color: var(--text-main-color);
-    transition: var(--transition);
-  }
-
-  &:hover span {
-    color: var(--accent-color);
-  }
-}
-</style>
