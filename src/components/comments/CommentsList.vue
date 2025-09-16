@@ -1,6 +1,7 @@
 <script setup>
 import { useComments } from '@/composables/useComments'
 import CommentItem from '@/components/comments/CommentItem.vue'
+import CommentsForm from '@/components/comments/CommentsForm.vue'
 
 // Props
 const props = defineProps({
@@ -22,10 +23,16 @@ const { comments, commentsCount, error } = useComments(props.postId)
 
   <div>
     <h3>Comments ({{ commentsCount }})</h3>
+    <CommentsForm :postId="postId" />
     <p v-if="comments.length === 0">Комментариев нет.</p>
     <div v-else class="comments-list">
       <CommentItem v-for="comment in comments" :key="comment.id" :comment="comment" />
     </div>
   </div>
 </template>
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.comments-list {
+  display: flex;
+  flex-direction: column-reverse;
+}
+</style>

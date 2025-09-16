@@ -55,6 +55,12 @@ input::placeholder {
   color: var(--placeholder-color);
 }
 
+textarea {
+  padding: 20px;
+  height: 100px;
+  resize: none;
+}
+
 p {
   margin: 0;
 }
@@ -110,6 +116,9 @@ a {
   display: inline-flex;
   align-items: center;
   grid-gap: 10px;
+}
+
+.user--link {
   cursor: pointer;
 }
 
@@ -125,6 +134,7 @@ a {
 }
 
 .user-img div {
+  text-transform: uppercase;
   font-weight: 600;
   color: var(--accent-color);
 }
@@ -137,4 +147,38 @@ a {
 
 .user--link:hover span {
   color: var(--accent-color);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  font-size: 16px;
+  padding: 10px 20px;
+  background-color: var(--accent-color);
+  color: #fff;
+  border-radius: var(--border-radius);
+  font-weight: 600;
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.btn:hover {
+  background-color: var(--accent-hover-color);
+}
+
+.field-error {
+  position: absolute;
+  left: 0;
+  bottom: 5px;
+  color: var(--error-color);
+  font-size: 12px;
+  margin-top: 5px;
 }
