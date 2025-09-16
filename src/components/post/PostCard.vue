@@ -149,6 +149,7 @@ const goToPostDetail = () => {
   &__comments {
     display: flex;
     align-items: center;
+    color: var(--placeholder-color);
 
     svg {
       margin-right: 5px;

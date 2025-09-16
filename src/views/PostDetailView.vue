@@ -3,6 +3,7 @@ import { onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { usePostsStore } from '@/stores/posts.js'
 import PostDetail from '@/components/post/PostDetail.vue'
+import CommentsList from '@/components/comments/CommentsList.vue'
 import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
 import SvgIcon from '@/components/common/SvgIcon.vue'
 
@@ -82,6 +83,8 @@ onUnmounted(() => {
         @post-updated="postsStore.updatePost"
       />
     </div>
+
+    <CommentsList v-if="postsStore.currentPost" :post-id="postsStore.currentPost.id" />
   </div>
 </template>
 
@@ -112,6 +115,10 @@ onUnmounted(() => {
       background: rgba(255, 255, 255, 1);
       color: var(--accent-color);
     }
+  }
+
+  &__content {
+    margin-bottom: 50px;
   }
 }
 </style>

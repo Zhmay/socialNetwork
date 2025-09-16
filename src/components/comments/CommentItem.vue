@@ -28,6 +28,12 @@ const props = defineProps({
 
 <style scoped lang="scss">
 .comment {
+  &:not(:last-child) {
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 30px;
+  }
+
   &__text {
     background-color: antiquewhite;
     padding: 10px;
