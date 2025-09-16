@@ -1,6 +1,7 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import { useLikes } from '@/composables/useLikes.js'
+import { useComments } from '@/composables/useComments'
 import { usePostsStore } from '@/stores/posts.js'
 import SvgIcon from '@/components/common/SvgIcon.vue'
 import HighlightedText from '@/components/common/HighlightedText.vue'
@@ -29,6 +30,7 @@ const emit = defineEmits(['post-updated'])
 const router = useRouter()
 const { togglePostLike } = useLikes()
 const postsStore = usePostsStore()
+const { commentsCount } = useComments(props.post.id)
 
 // Методы
 const handleLike = () => {
@@ -80,14 +82,21 @@ const goToPostDetail = () => {
     </div>
     <div class="post__footer" :class="{ 'post__footer--no-author': hideAuthor }">
       <userItem v-if="!hideAuthor" :post="post" />
-      <button
-        @click.stop="handleLike"
-        :class="['post__like-btn', { 'post__like-btn--liked': post.isLiked }]"
-        :title="post.isLiked ? 'Like' : 'Dislike'"
-      >
-        <SvgIcon name="heart" size="20" />
-        <span class="post__like-count">{{ post.likes }}</span>
-      </button>
+
+      <div class="post__footer-box">
+        <div class="post__comments">
+          <SvgIcon name="comments" size="22" />
+          <span>{{ commentsCount }}</span>
+        </div>
+        <button
+          @click.stop="handleLike"
+          :class="['post__like-btn', { 'post__like-btn--liked': post.isLiked }]"
+          :title="post.isLiked ? 'Like' : 'Dislike'"
+        >
+          <SvgIcon name="heart" size="20" />
+          <span class="post__like-count">{{ post.likes }}</span>
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -128,6 +137,21 @@ const goToPostDetail = () => {
 
     &--no-author {
       justify-content: flex-end;
+    }
+
+    &-box {
+      display: flex;
+      align-items: center;
+      grid-gap: 15px;
+    }
+  }
+
+  &__comments {
+    display: flex;
+    align-items: center;
+
+    svg {
+      margin-right: 5px;
     }
   }
 
