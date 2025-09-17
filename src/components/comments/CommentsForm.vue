@@ -1,6 +1,8 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, reactive, watch } from 'vue'
 import { useComments } from '@/composables/useComments'
+import { commentValidationSchema } from '@/composables/commentValidationSchema.js'
+import { useValidation } from '@/composables/useValidation.js'
 
 // Props
 const props = defineProps({
@@ -10,65 +12,73 @@ const props = defineProps({
   },
 })
 
+// Form state
+const formData = reactive({
+  name: '',
+  email: '',
+  comment: '',
+})
+
 // Composables
 const { addComment, loading, error } = useComments(props.postId)
-
-// Form state
-const name = ref('')
-const email = ref('')
-const comment = ref('')
+const { errors, validateAll, clearErrors, isFormValid, validateField, hasTriedSubmit } =
+  useValidation(commentValidationSchema, formData)
 const isSubmitting = ref(false)
 const submitError = ref(null)
-const showValidationErrors = ref(false)
 
-// Computed
-const isFormValid = computed(() => {
-  return (
-    name.value.trim() && email.value.trim() && comment.value.trim() && isValidEmail(email.value)
-  )
-})
+// Watchers
+watch(
+  () => formData.name,
+  () => {
+    if (hasTriedSubmit.value) {
+      validateField('name')
+    }
+  },
+)
 
-const canSubmit = computed(() => {
-  return isFormValid.value && !isSubmitting.value && !loading.value
-})
+watch(
+  () => formData.email,
+  () => {
+    // Валидируем email в реальном времени если он не пустой
+    if (formData.email.trim() || hasTriedSubmit.value) {
+      validateField('email')
+    }
+  },
+)
+
+watch(
+  () => formData.comment,
+  () => {
+    if (hasTriedSubmit.value) {
+      validateField('comment')
+    }
+  },
+)
 
 // Methods
-const isValidEmail = (email) => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  return emailRegex.test(email)
-}
-
-const resetForm = () => {
-  name.value = ''
-  email.value = ''
-  comment.value = ''
-  submitError.value = null
-}
 
 const handleSubmit = async () => {
-  showValidationErrors.value = true
-
-  if (!isFormValid.value) {
+  if (!validateAll()) {
     return // Показываем ошибки, но не отправляем
   }
-
-  if (!canSubmit.value) return
 
   isSubmitting.value = true
   submitError.value = null
 
   try {
     const commentData = {
-      name: name.value.trim(),
-      email: email.value.trim(),
-      body: comment.value.trim(),
+      name: formData.name.trim(),
+      email: formData.email.trim(),
+      body: formData.comment.trim(),
     }
 
     const result = await addComment(commentData)
 
     if (result) {
-      resetForm()
-      showValidationErrors.value = false
+      formData.name = ''
+      formData.email = ''
+      formData.comment = ''
+      clearErrors()
       // Можно добавить уведомление об успехе
     } else {
       submitError.value = 'Не удалось отправить комментарий'
@@ -83,7 +93,7 @@ const handleSubmit = async () => {
 </script>
 
 <template>
-  <form class="comments-form" @submit.prevent="handleSubmit">
+  <form class="comments-form" @submit.prevent="handleSubmit" novalidate>
     <!-- Отображение ошибок -->
     <div v-if="submitError || error" class="error-message">
       {{ submitError || error }}
@@ -96,10 +106,10 @@ const handleSubmit = async () => {
           type="text"
           name="name"
           placeholder="Enter your name"
-          v-model="name"
+          v-model="formData.name"
           :disabled="isSubmitting || loading"
         />
-        <div v-if="showValidationErrors && !name.trim()" class="field-error">Name is required</div>
+        <div v-if="errors.name" class="field-error">{{ errors.name }}</div>
       </div>
       <div class="comments-form__inputbox">
         <label for="email" class="comments-form__label">Email</label>
@@ -108,15 +118,10 @@ const handleSubmit = async () => {
           type="email"
           name="email"
           placeholder="Enter your email"
-          v-model="email"
+          v-model="formData.email"
           :disabled="isSubmitting || loading"
         />
-        <div v-if="showValidationErrors && !email.trim()" class="field-error">
-          Email is required
-        </div>
-        <div v-else-if="showValidationErrors && email && !isValidEmail(email)" class="field-error">
-          Please enter a valid email address
-        </div>
+        <div v-if="errors.email" class="field-error">{{ errors.email }}</div>
       </div>
     </div>
     <div class="comments-form__inputbox">
@@ -125,12 +130,10 @@ const handleSubmit = async () => {
         id="comment"
         name="comment"
         placeholder="Enter your comment"
-        v-model="comment"
+        v-model="formData.comment"
         :disabled="isSubmitting || loading"
       ></textarea>
-      <div v-if="showValidationErrors && !comment.trim()" class="field-error">
-        Comment is required
-      </div>
+      <div v-if="errors.comment" class="field-error">{{ errors.comment }}</div>
     </div>
     <div class="comments-form__ctrl">
       <button
