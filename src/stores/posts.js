@@ -35,13 +35,30 @@ export const usePostsStore = defineStore('posts', () => {
     if (searchQuery.value.trim()) {
       const query = searchQuery.value.toLowerCase().trim()
       filtered = filtered.filter((post) => {
-        const titleMatch = post.title.toLowerCase().includes(query)
-        const bodyMatch = post.body.toLowerCase().includes(query)
+        // Базовый поиск по посту
+        const titleMatch = post.title
+          ? post.title
+              .toLowerCase()
+              .split(/\s+/)
+              .some((word) => word === query)
+          : false
+        const bodyMatch = post.body
+          ? post.body
+              .toLowerCase()
+              .split(/\s+/)
+              .some((word) => word === query)
+          : false
 
-        // НОВОЕ: Поиск по имени автора
-        const authorNameMatch = post.author?.name?.toLowerCase().includes(query) || false
-        const authorUsernameMatch = post.author?.username?.toLowerCase().includes(query) || false
-        const authorEmailMatch = post.author?.email?.toLowerCase().includes(query) || false
+        // ИСПРАВЛЕННЫЙ: Безопасный поиск по автору
+        const authorNameMatch = post.author?.name
+          ? post.author.name.toLowerCase().includes(query)
+          : false
+        const authorUsernameMatch = post.author?.username
+          ? post.author.username.toLowerCase().includes(query)
+          : false
+        const authorEmailMatch = post.author?.email
+          ? post.author.email.toLowerCase().includes(query)
+          : false
 
         return titleMatch || bodyMatch || authorNameMatch || authorUsernameMatch || authorEmailMatch
       })
@@ -61,7 +78,7 @@ export const usePostsStore = defineStore('posts', () => {
       const response = await postsService.getAllPosts()
       const rawPosts = response.data.map((post) => initializePostLikes(post))
 
-      // НОВОЕ: Получаем уникальных авторов и предзагружаем их данные
+      // Получаем уникальных авторов и предзагружаем их данные
       const uniqueUserIds = [...new Set(rawPosts.map((post) => post.userId))]
 
       // Загружаем всех авторов параллельно
@@ -76,7 +93,7 @@ export const usePostsStore = defineStore('posts', () => {
         }
       })
 
-      // НОВОЕ: Обогащаем посты данными авторов
+      // Обогащаем посты данными авторов
       posts.value = rawPosts.map((post) => ({
         ...post,
         author: authorsMap.get(post.userId) || null,
@@ -97,7 +114,7 @@ export const usePostsStore = defineStore('posts', () => {
       const response = await postsService.getPostById(id)
       const post = initializePostLikes(response.data)
 
-      // НОВОЕ: Загружаем данные автора для отдельного поста
+      // Загружаем данные автора для отдельного поста
       const author = await fetchUser(post.userId)
       currentPost.value = {
         ...post,
@@ -126,7 +143,7 @@ export const usePostsStore = defineStore('posts', () => {
         isLiked: false,
       })
 
-      // НОВОЕ: Добавляем данные автора для нового поста
+      // Добавляем данные автора для нового поста
       const author = await fetchUser(newPost.userId)
       const enrichedPost = {
         ...newPost,
