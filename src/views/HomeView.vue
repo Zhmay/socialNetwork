@@ -74,7 +74,7 @@ onMounted(() => {
     <div class="home-header">
       <SearchBox
         :model-value="postsStore.searchQuery"
-        placeholder="Search by title, content..."
+        placeholder="Search by title, content, author...."
         :debounce="400"
         :search-results="searchResults"
         @search="handleSearch"
