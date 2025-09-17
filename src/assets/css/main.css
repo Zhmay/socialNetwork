@@ -49,9 +49,18 @@ select {
   height: 50px;
   width: 100%;
   box-shadow: var(--box-shadow);
+  border: 1px solid #fff;
 }
 
-input::placeholder {
+input.error,
+textarea.error,
+select.error {
+  border-color: var(--error-color) !important;
+}
+
+input::placeholder,
+textarea::placeholder,
+select::placeholder {
   color: var(--placeholder-color);
 }
 

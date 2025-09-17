@@ -108,6 +108,7 @@ const handleSubmit = async () => {
           placeholder="Enter your name"
           v-model="formData.name"
           :disabled="isSubmitting || loading"
+          :class="{ error: errors.name }"
         />
         <div v-if="errors.name" class="field-error">{{ errors.name }}</div>
       </div>
@@ -120,6 +121,7 @@ const handleSubmit = async () => {
           placeholder="Enter your email"
           v-model="formData.email"
           :disabled="isSubmitting || loading"
+          :class="{ error: errors.email }"
         />
         <div v-if="errors.email" class="field-error">{{ errors.email }}</div>
       </div>
@@ -132,6 +134,7 @@ const handleSubmit = async () => {
         placeholder="Enter your comment"
         v-model="formData.comment"
         :disabled="isSubmitting || loading"
+        :class="{ error: errors.comment }"
       ></textarea>
       <div v-if="errors.comment" class="field-error">{{ errors.comment }}</div>
     </div>
@@ -150,6 +153,10 @@ const handleSubmit = async () => {
 
 <style scoped lang="scss">
 .comments-form {
+  background-color: #fff;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  padding: 20px;
   margin-bottom: 30px;
 
   &__row {
@@ -161,6 +168,11 @@ const handleSubmit = async () => {
   &__inputbox {
     position: relative;
     padding-bottom: 20px;
+
+    input,
+    textarea {
+      border-color: #ccc;
+    }
   }
 
   &__label {
