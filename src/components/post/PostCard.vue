@@ -60,7 +60,7 @@ const goToPostDetail = () => {
 </script>
 
 <template>
-  <div class="post" @click="goToPostDetail">
+  <div class="post" @click="goToPostDetail" :id="post.id">
     <div class="post__title">
       <HighlightedText
         :text="post.title"

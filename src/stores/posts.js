@@ -72,7 +72,7 @@ export const usePostsStore = defineStore('posts', () => {
           return (a.title || '').localeCompare(b.title || '')
         case 'default':
         default:
-          return a.id - b.id
+          return b.id - a.id
       }
     })
 
@@ -149,11 +149,20 @@ export const usePostsStore = defineStore('posts', () => {
 
     try {
       const response = await postsService.createPost(postData)
-      const newPost = initializePostLikes({
+      const newPost = {
         ...response.data,
+        id: Date.now(), // Временный ID
         likes: 0,
         isLiked: false,
-      })
+      }
+
+      // Сначала устанавливаем лайки в localStorage ПЕРЕД инициализацией
+      const { saveLikesToStorage, saveIsLikedToStorage, initializePostLikes } = useLikes()
+      saveLikesToStorage(newPost.id, 0) // Устанавливаем 0 лайков
+      saveIsLikedToStorage(newPost.id, false) // Не лайкнуто
+
+      // Теперь инициализируем - он найдет наши значения в localStorage
+      const postWithLikes = initializePostLikes(newPost)
 
       // Добавляем данные автора для нового поста
       const author = await fetchUser(newPost.userId)
