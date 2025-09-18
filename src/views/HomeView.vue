@@ -1,13 +1,13 @@
 <script setup>
 import { ref, onMounted, computed, watch, nextTick } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { usePostsStore } from '@/stores/posts'
 import PostList from '@/components/post/PostList.vue'
 import SearchBox from '@/components/common/SearchBox.vue'
+import SortSelect from '@/components/common/sortSelect.vue'
 
 // Router
 const route = useRoute()
-const router = useRouter()
 
 // Store
 const postsStore = usePostsStore()
@@ -52,6 +52,10 @@ const handleReload = () => {
   loadPosts()
 }
 
+const handleSortChange = (sortType) => {
+  postsStore.setSortBy(sortType)
+}
+
 // Отслеживаем изменения query параметров только после загрузки постов
 watch(
   () => route.fullPath,
@@ -79,6 +83,8 @@ onMounted(() => {
         :search-results="searchResults"
         @search="handleSearch"
       />
+
+      <SortSelect :model-value="postsStore.sortBy" @update:model-value="handleSortChange" />
     </div>
 
     <PostList
@@ -93,3 +99,9 @@ onMounted(() => {
     />
   </div>
 </template>
+
+<style scoped lang="scss">
+.home-header {
+  margin-bottom: 30px;
+}
+</style>

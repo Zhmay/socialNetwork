@@ -6,17 +6,17 @@ import SvgIcon from './SvgIcon.vue'
 const props = defineProps({
   placeholder: {
     type: String,
-    default: 'Search...'
+    default: 'Search...',
   },
   // Задержка перед отправкой события (debounce)
   debounce: {
     type: Number,
-    default: 300
+    default: 300,
   },
   // Начальное значение
   modelValue: {
     type: String,
-    default: ''
+    default: '',
   },
   // Результаты поиска для отображения статистики
   searchResults: {
@@ -24,14 +24,14 @@ const props = defineProps({
     default: () => ({
       total: 0,
       query: '',
-      isSearching: false
-    })
+      isSearching: false,
+    }),
   },
   // Показывать ли индикатор результатов
   showResults: {
     type: Boolean,
-    default: true
-  }
+    default: true,
+  },
 })
 
 // Emits
@@ -43,9 +43,12 @@ const isFocused = ref(false)
 let debounceTimeout = null
 
 // Синхронизация с v-model
-watch(() => props.modelValue, (newValue) => {
-  searchQuery.value = newValue
-})
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    searchQuery.value = newValue
+  },
+)
 
 watch(searchQuery, (newValue) => {
   emit('update:modelValue', newValue)
@@ -57,7 +60,7 @@ const handleInput = () => {
   if (debounceTimeout) {
     clearTimeout(debounceTimeout)
   }
-  
+
   debounceTimeout = setTimeout(() => {
     emit('search', searchQuery.value.trim())
   }, props.debounce)
@@ -76,50 +79,41 @@ const clearSearch = () => {
 <template>
   <div class="search-container">
     <div class="search-box">
-      <SvgIcon 
-          name="search" 
-          class="icon-search" 
-          :size="20"
-      />
+      <SvgIcon name="search" class="icon-search" :size="20" />
       <input
-          v-model="searchQuery"
-          type="text"
-          :placeholder="placeholder"
-          @input="handleInput"
-          @keydown.enter="handleEnter"
-          @focus="isFocused = true"
-          @blur="isFocused = false"
+        v-model="searchQuery"
+        type="text"
+        :placeholder="placeholder"
+        @input="handleInput"
+        @keydown.enter="handleEnter"
+        @focus="isFocused = true"
+        @blur="isFocused = false"
       />
       <button
-          v-if="searchQuery"
-          @click="clearSearch"
-          class="search-box__clear"
-          type="button"
-          aria-label="Clear search"
+        v-if="searchQuery"
+        @click="clearSearch"
+        class="search-box__clear"
+        type="button"
+        aria-label="Clear search"
       >
-          <SvgIcon name="close" :size="18" />
+        <SvgIcon name="close" :size="18" />
       </button>
     </div>
 
     <!-- Индикатор результатов поиска -->
     <Transition name="search-results">
-      <div 
-        v-if="showResults && searchResults.query" 
-        class="search-results-info"
-      >
+      <div v-if="showResults && searchResults.query" class="search-results-info">
         <div v-if="searchResults.total > 0" class="search-results-elem results-found">
           Found <b>{{ searchResults.total }}</b>
           {{ searchResults.total === 1 ? 'post' : searchResults.total < 5 ? 'posts' : 'posts' }}
           by query <b>"{{ searchResults.query }}"</b>
         </div>
-        
+
         <div v-else-if="!searchResults.isSearching" class="search-results-elem no-results">
-          Posts not found for query <b>"{{ searchResults.query }}"</b> 
+          Posts not found for query <b>"{{ searchResults.query }}"</b>
         </div>
-        
-        <div v-else class="searching">
-          Searching...
-        </div>
+
+        <div v-else class="searching">Searching...</div>
       </div>
     </Transition>
   </div>
@@ -128,7 +122,7 @@ const clearSearch = () => {
 <style scoped lang="scss">
 .search-container {
   width: 100%;
-  margin-bottom: 30px;
+  margin-bottom: 10px;
   position: relative;
 }
 

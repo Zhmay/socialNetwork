@@ -14,6 +14,7 @@ export const usePostsStore = defineStore('posts', () => {
   const currentPost = ref(null)
   const loading = ref(false)
   const error = ref(null)
+  const sortBy = ref('default') // 'default', 'popularity', 'alphabetical'
 
   // Фильтры (простые)
   const searchQuery = ref('')
@@ -22,7 +23,7 @@ export const usePostsStore = defineStore('posts', () => {
   // === GETTERS ===
   const totalPosts = computed(() => posts.value.length)
 
-  // ОБНОВЛЕННЫЙ filteredPosts с поиском по авторам
+  // filteredPosts с поиском по авторам
   const filteredPosts = computed(() => {
     let filtered = posts.value
 
@@ -31,11 +32,10 @@ export const usePostsStore = defineStore('posts', () => {
       filtered = filtered.filter((post) => post.userId === selectedUserId.value)
     }
 
-    // Поиск по тексту (РАСШИРЕННЫЙ)
+    // Поиск по тексту
     if (searchQuery.value.trim()) {
       const query = searchQuery.value.toLowerCase().trim()
       filtered = filtered.filter((post) => {
-        // Базовый поиск по посту
         const titleMatch = post.title
           ? post.title
               .toLowerCase()
@@ -49,7 +49,6 @@ export const usePostsStore = defineStore('posts', () => {
               .some((word) => word === query)
           : false
 
-        // ИСПРАВЛЕННЫЙ: Безопасный поиск по автору
         const authorNameMatch = post.author?.name
           ? post.author.name.toLowerCase().includes(query)
           : false
@@ -64,12 +63,25 @@ export const usePostsStore = defineStore('posts', () => {
       })
     }
 
-    return filtered
+    // Сортировка
+    const sorted = [...filtered].sort((a, b) => {
+      switch (sortBy.value) {
+        case 'popularity':
+          return (b.likes || 0) - (a.likes || 0)
+        case 'alphabetical':
+          return (a.title || '').localeCompare(b.title || '')
+        case 'default':
+        default:
+          return a.id - b.id
+      }
+    })
+
+    return sorted
   })
 
   // === ACTIONS ===
 
-  // ОБНОВЛЕННЫЙ fetchAllPosts с предзагрузкой авторов
+  // fetchAllPosts с предзагрузкой авторов
   const fetchAllPosts = async () => {
     loading.value = true
     error.value = null
@@ -175,6 +187,10 @@ export const usePostsStore = defineStore('posts', () => {
     }
   }
 
+  const setSortBy = (sortType) => {
+    sortBy.value = sortType
+  }
+
   // Поиск и фильтрация
   const setSearchQuery = (query) => {
     searchQuery.value = query
@@ -187,6 +203,7 @@ export const usePostsStore = defineStore('posts', () => {
   const clearFilters = () => {
     searchQuery.value = ''
     selectedUserId.value = null
+    // sortBy.value = 'default' // add if needed
   }
 
   // Очистка состояния
@@ -206,6 +223,7 @@ export const usePostsStore = defineStore('posts', () => {
     error,
     searchQuery,
     selectedUserId,
+    sortBy,
 
     // Getters
     totalPosts,
@@ -218,6 +236,7 @@ export const usePostsStore = defineStore('posts', () => {
     updatePost,
     setSearchQuery,
     setUserFilter,
+    setSortBy,
     clearFilters,
     clearCurrentPost,
     clearError,
