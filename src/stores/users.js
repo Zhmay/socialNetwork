@@ -11,12 +11,42 @@ export const useUsersStore = defineStore('users', () => {
   const userPosts = ref([])
   const loading = ref(false)
   const error = ref(null)
+  const searchQuery = ref('')
 
   // === GETTERS ===
   const totalUsers = computed(() => users.value.length)
 
   const getUserById = computed(() => (id) => {
     return users.value.find((user) => user.id === parseInt(id))
+  })
+
+  // Улучшенный фильтр пользователей с поиском по имени, username, email, компании и городу
+  const filteredUsers = computed(() => {
+    if (!searchQuery.value.trim()) {
+      return users.value
+    }
+
+    const query = searchQuery.value.toLowerCase().trim()
+
+    return users.value.filter((user) => {
+      // Поиск по имени (целые слова)
+      const nameMatch = user.name ? user.name.toLowerCase().includes(query) : false
+
+      // Поиск по username и email (подстроки)
+      const usernameMatch = user.username ? user.username.toLowerCase().includes(query) : false
+
+      const emailMatch = user.email ? user.email.toLowerCase().includes(query) : false
+
+      // Поиск по компании
+      const companyMatch = user.company?.name
+        ? user.company.name.toLowerCase().includes(query)
+        : false
+
+      // Поиск по городу
+      const cityMatch = user.address?.city ? user.address.city.toLowerCase().includes(query) : false
+
+      return nameMatch || usernameMatch || emailMatch || companyMatch || cityMatch
+    })
   })
 
   // === ACTIONS ===
@@ -85,6 +115,14 @@ export const useUsersStore = defineStore('users', () => {
     userPosts.value = []
   }
 
+  const setSearchQuery = (query) => {
+    searchQuery.value = query
+  }
+
+  const clearSearch = () => {
+    searchQuery.value = ''
+  }
+
   return {
     // State
     users,
@@ -92,10 +130,12 @@ export const useUsersStore = defineStore('users', () => {
     userPosts,
     loading,
     error,
+    searchQuery,
 
     // Getters
     totalUsers,
     getUserById,
+    filteredUsers,
 
     // Actions
     fetchAllUsers,
@@ -104,5 +144,7 @@ export const useUsersStore = defineStore('users', () => {
     clearError,
     fetchUserPosts,
     clearUserPosts,
+    setSearchQuery,
+    clearSearch,
   }
 })

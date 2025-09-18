@@ -45,9 +45,21 @@ const goToProfile = () => {
       </template>
     </div>
     <div class="user-card__name">
-      {{ user.name }}
+      <HighlightedText
+        :text="user.name"
+        :query="usersStore.searchQuery"
+        tag="span"
+        :case-sensitive="false"
+      />
     </div>
-    <span class="user-card__username">@{{ user.username }}</span>
+    <span class="user-card__username">
+      @<HighlightedText
+        :text="user.username"
+        :query="usersStore.searchQuery"
+        tag="span"
+        :case-sensitive="false"
+      />
+    </span>
   </div>
 </template>
 <style scoped lang="scss">

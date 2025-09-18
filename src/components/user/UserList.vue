@@ -1,6 +1,5 @@
 <script setup>
 import { onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
 import { useUsersStore } from '@/stores/users.js'
 import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
 import UserCard from '@/components/user/UserCard.vue'
@@ -14,8 +13,6 @@ const props = defineProps({
 })
 
 // Composables
-const router = useRouter()
-const route = useRoute()
 const usersStore = useUsersStore()
 
 // Lifecycle
@@ -32,8 +29,11 @@ onMounted(async () => {
   <!-- Состояния загрузки и данных -->
   <LoadingSpinner v-if="usersStore.loading" center size="lg" show-text :text="props.loadingText" />
 
-  <div v-else-if="usersStore.users.length > 0" class="users-list">
-    <UserCard v-for="user in usersStore.users" :key="user.id" :user="user" />
+  <div v-else-if="usersStore.filteredUsers.length > 0" class="users-list">
+    <UserCard v-for="user in usersStore.filteredUsers" :key="user.id" :user="user" />
+  </div>
+  <div v-else-if="usersStore.searchQuery" class="no-results">
+    No users found for "{{ usersStore.searchQuery }}"
   </div>
 </template>
 <style scoped lang="scss">
@@ -49,5 +49,11 @@ onMounted(async () => {
   @media (max-width: 1280px) {
     grid-template-columns: repeat(2, 1fr);
   }
+}
+
+.no-results {
+  text-align: center;
+  padding: 40px 20px;
+  color: #666;
 }
 </style>
