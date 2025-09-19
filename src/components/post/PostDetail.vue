@@ -29,7 +29,9 @@ const handleLike = () => {
     <!-- Заголовок -->
     <div class="post__hero">
       <div class="post__hero-img">
-        <img src="@/assets/img/post-img.webp" alt="" />
+        <img v-if="post.image" :src="post.image" alt="Post Image" />
+        <SvgIcon v-else name="photo" size="80" />
+
         <button
           @click="handleLike"
           :class="['post__like-btn', { 'post__like-btn--liked': post.isLiked }]"
@@ -45,32 +47,6 @@ const handleLike = () => {
     <!-- Контент поста -->
     <div class="post__content">
       <p class="post__text">{{ post.body }}</p>
-      <p class="post__text">
-        Lorem, ipsum dolor sit amet consectetur adipisicing elit. Odit, in cum autem quam provident
-        nulla ex ipsa voluptatum fuga officia laudantium possimus natus eligendi magnam quod
-        obcaecati odio hic velit.
-      </p>
-      <p class="post__text">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod.
-      </p>
-      <p class="post__text">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempore dolor ab alias cumque
-        commodi soluta distinctio consectetur quos? Ullam earum ratione est pariatur omnis libero
-        amet. Quo placeat libero illum, repellat nam quasi iure provident maiores. Quaerat, velit
-        at. Sunt cupiditate distinctio expedita laborum est impedit quidem iusto atque, asperiores
-        eligendi mollitia, dolores unde saepe, nostrum magnam et veniam. Voluptatum?
-      </p>
-      <p class="post__text">
-        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quod minus exercitationem dolorum
-        eaque sunt nihil magni consequuntur velit unde voluptatem, cumque doloremque officiis
-        laborum magnam quam, impedit architecto alias animi provident hic error. Ipsa molestias unde
-        mollitia totam eos similique, natus, minima illum molestiae repellendus ducimus hic!
-        Mollitia, ex. Consectetur, vitae delectus, consequatur dignissimos nulla iste harum voluptas
-        voluptates soluta assumenda culpa sunt nisi consequuntur officia facere a laudantium
-        recusandae velit corrupti dolorem maiores eius. Tenetur vitae at corrupti quidem aspernatur
-        sunt omnis, dignissimos est, repellat, ea provident enim! Accusamus unde quisquam aut
-        quibusdam impedit quae quo, maiores eaque similique.
-      </p>
     </div>
 
     <div class="post__bottom">
@@ -91,6 +67,11 @@ const handleLike = () => {
     width: 100%;
     height: 300px;
     border-radius: var(--border-radius);
+    background-color: #e4e8ed;
+    color: var(--placeholder-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
     overflow: hidden;
     margin-bottom: 20px;
     box-shadow:

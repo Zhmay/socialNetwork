@@ -1,78 +1,74 @@
 <script setup>
-    import SvgIcon from '@/components/common/SvgIcon.vue';
+import SvgIcon from '@/components/common/SvgIcon.vue'
 </script>
 
 <template>
-    <aside class="navbar">
-        <div class="navbar__top">
-            <a href="#" class="navbar__logo">ZHNetwork</a>
-        </div>
-        <nav class="navbar__list">
-            <router-link to="/" class="navbar__link">
-                <SvgIcon name="home" size="24"/>
-                <span>Home</span>
-            </router-link>
-            <router-link to="/people" class="navbar__link">
-                <SvgIcon name="users" size="24"/>
-                <span>People</span>
-            </router-link>
-            <router-link to="/messages" class="navbar__link">
-                <SvgIcon name="messages" size="24"/>
-                <span>Messages</span>
-            </router-link>
-            <router-link to="/settings" class="navbar__link">
-                <SvgIcon name="settings" size="24"/>
-                <span>Settings</span>
-            </router-link>
-        </nav>
-    </aside>
+  <aside class="navbar">
+    <div class="navbar__top">
+      <a href="#" class="navbar__logo">ZHNetwork</a>
+    </div>
+    <nav class="navbar__list">
+      <router-link to="/" class="navbar__link">
+        <SvgIcon name="home" size="24" />
+        <span>Home</span>
+      </router-link>
+      <router-link to="/people" class="navbar__link">
+        <SvgIcon name="users" size="24" />
+        <span>People</span>
+      </router-link>
+      <router-link to="/settings" class="navbar__link">
+        <SvgIcon name="settings" size="24" />
+        <span>Settings</span>
+      </router-link>
+    </nav>
+  </aside>
 </template>
 
 <style scoped lang="scss">
-    .navbar {
-        display: flex;
-        flex-direction: column;
-        width: 220px;
-        flex-shrink: 0;
-        height: 100%;
-        padding: 20px 0;
+.navbar {
+  display: flex;
+  flex-direction: column;
+  width: 220px;
+  flex-shrink: 0;
+  height: 100%;
+  padding: 20px 0;
 
-        &__top {
-            padding: 0 20px;
-            margin-bottom: 40px;
-        }
+  &__top {
+    padding: 0 20px;
+    margin-bottom: 40px;
+  }
 
-        &__logo {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--accent-color);
-        }
+  &__logo {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--accent-color);
+  }
 
-        &__list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
 
-        &__link {
-            display: flex;
-            align-items: center;
-            height: 44px;
-            gap: 10px;
-            font-weight: 600;
-            padding: 10px 20px;
-            border-radius: 40px 0 0 40px;
-            color: var(--text-main-color);
-            transition: var(--transition);
+  &__link {
+    display: flex;
+    align-items: center;
+    height: 44px;
+    gap: 10px;
+    font-weight: 600;
+    padding: 10px 20px;
+    border-radius: 40px 0 0 40px;
+    color: var(--text-main-color);
+    transition: var(--transition);
 
-            &.router-link-active {
-                color: var(--accent-color);
-                background-color: var(--content-color);
-            }
-
-            &:hover {
-                color: var(--accent-color);
-            }
-        }
+    &.router-link-active {
+      color: var(--accent-color);
+      background-color: var(--content-color);
     }
+
+    &:hover {
+      color: var(--accent-color);
+    }
+  }
+}
 </style>

@@ -61,41 +61,47 @@ const goToPostDetail = () => {
 
 <template>
   <div class="post" @click="goToPostDetail" :id="post.id">
-    <div class="post__title">
-      <HighlightedText
-        :text="post.title"
-        :query="postsStore.searchQuery"
-        tag="span"
-        :case-sensitive="false"
-        :whole-words="true"
-      />
+    <div class="post__img">
+      <img v-if="post.image" :src="post.image" alt="Post Image" />
+      <SvgIcon v-else name="photo" size="80" />
     </div>
-    <div class="post__content">
-      <HighlightedText
-        :text="post.body"
-        :query="postsStore.searchQuery"
-        tag="p"
-        :show-excerpt="!!postsStore.searchQuery"
-        :max-length="200"
-        :context-padding="40"
-      />
-    </div>
-    <div class="post__footer" :class="{ 'post__footer--no-author': hideAuthor }">
-      <userItem v-if="!hideAuthor" :post="post" />
+    <div class="post__body">
+      <div class="post__title">
+        <HighlightedText
+          :text="post.title"
+          :query="postsStore.searchQuery"
+          tag="span"
+          :case-sensitive="false"
+          :whole-words="true"
+        />
+      </div>
+      <div class="post__content">
+        <HighlightedText
+          :text="post.body"
+          :query="postsStore.searchQuery"
+          tag="p"
+          :show-excerpt="!!postsStore.searchQuery"
+          :max-length="200"
+          :context-padding="40"
+        />
+      </div>
+      <div class="post__footer" :class="{ 'post__footer--no-author': hideAuthor }">
+        <userItem v-if="!hideAuthor" :post="post" />
 
-      <div class="post__footer-box">
-        <div class="post__comments">
-          <SvgIcon name="comments" size="22" />
-          <span>{{ commentsCount }}</span>
+        <div class="post__footer-box">
+          <div class="post__comments">
+            <SvgIcon name="comments" size="22" />
+            <span>{{ commentsCount }}</span>
+          </div>
+          <button
+            @click.stop="handleLike"
+            :class="['post__like-btn', { 'post__like-btn--liked': post.isLiked }]"
+            :title="post.isLiked ? 'Like' : 'Dislike'"
+          >
+            <SvgIcon name="heart" size="20" />
+            <span class="post__like-count">{{ post.likes }}</span>
+          </button>
         </div>
-        <button
-          @click.stop="handleLike"
-          :class="['post__like-btn', { 'post__like-btn--liked': post.isLiked }]"
-          :title="post.isLiked ? 'Like' : 'Dislike'"
-        >
-          <SvgIcon name="heart" size="20" />
-          <span class="post__like-count">{{ post.likes }}</span>
-        </button>
       </div>
     </div>
   </div>
@@ -105,7 +111,6 @@ const goToPostDetail = () => {
 .post {
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
-  padding: 16px;
   margin-bottom: 16px;
   background-color: #fff;
   cursor: pointer;
@@ -114,6 +119,29 @@ const goToPostDetail = () => {
     .post__title {
       color: var(--accent-color);
     }
+  }
+
+  &__img {
+    width: 100%;
+    height: 200px;
+    margin-bottom: 12px;
+    border-radius: 10px 10px 0 0;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #e4e8ed;
+    color: var(--placeholder-color);
+
+    img {
+      width: 100%;
+      object-position: top center;
+      object-fit: cover;
+    }
+  }
+
+  &__body {
+    padding: 0 16px 16px;
   }
 
   &__title {
