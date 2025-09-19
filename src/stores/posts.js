@@ -87,6 +87,10 @@ export const usePostsStore = defineStore('posts', () => {
     error.value = null
 
     try {
+      // Сохраняем локально созданные посты (с ID больше 100)
+      const localPosts = posts.value.filter((post) => post.id > 100)
+      console.log('Сохраняем локальные посты:', localPosts.length)
+
       const response = await postsService.getAllPosts()
       const rawPosts = response.data.map((post) => initializePostLikes(post))
 
@@ -106,10 +110,15 @@ export const usePostsStore = defineStore('posts', () => {
       })
 
       // Обогащаем посты данными авторов
-      posts.value = rawPosts.map((post) => ({
+      const enrichedApiPosts = rawPosts.map((post) => ({
         ...post,
         author: authorsMap.get(post.userId) || null,
       }))
+
+      // Объединяем локальные посты с API постами (локальные в начале)
+      posts.value = [...localPosts, ...enrichedApiPosts]
+
+      console.log('Итого постов после объединения:', posts.value.length)
     } catch (err) {
       error.value = 'Ошибка загрузки постов: ' + err.message
       console.error('Error fetching posts:', err)
@@ -123,21 +132,41 @@ export const usePostsStore = defineStore('posts', () => {
     error.value = null
 
     try {
-      const response = await postsService.getPostById(id)
-      const post = initializePostLikes(response.data)
+      // Проверяем локальные посты
+      const localPost = posts.value.find((post) => post.id == id)
+      if (localPost) {
+        currentPost.value = localPost
+        loading.value = false
+        return localPost
+      }
 
-      // Загружаем данные автора для отдельного поста
-      const author = await fetchUser(post.userId)
-      currentPost.value = {
-        ...post,
+      // Запрос к API
+      const response = await postsService.getPostById(id)
+      const postData = initializePostLikes(response.data)
+
+      const author = await fetchUser(postData.userId)
+      const enrichedPost = {
+        ...postData,
         author: author || null,
       }
 
-      return currentPost.value
+      currentPost.value = enrichedPost
+
+      return enrichedPost
     } catch (err) {
+      // При ошибке API проверяем локальные посты
+      const localPost = posts.value.find((post) => post.id == id)
+      if (localPost) {
+        console.log('Найден локальный пост после ошибки API:', localPost.title)
+        currentPost.value = localPost
+        loading.value = false
+        return localPost
+      }
+
       error.value = 'Ошибка загрузки поста: ' + err.message
       console.error('Error fetching post:', err)
-      return null
+      currentPost.value = null
+      throw err
     } finally {
       loading.value = false
     }
