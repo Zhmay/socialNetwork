@@ -3,6 +3,7 @@ import { ref, reactive, watch } from 'vue'
 import { useComments } from '@/composables/useComments'
 import { commentValidationSchema } from '@/composables/commentValidationSchema.js'
 import { useValidation } from '@/composables/useValidation.js'
+import { useToast } from '@/composables/useToast'
 
 // Props
 const props = defineProps({
@@ -25,6 +26,7 @@ const { errors, validateAll, clearErrors, isFormValid, validateField, hasTriedSu
   useValidation(commentValidationSchema, formData)
 const isSubmitting = ref(false)
 const submitError = ref(null)
+const { success, error: toastError } = useToast()
 
 // Watchers
 watch(
@@ -79,12 +81,15 @@ const handleSubmit = async () => {
       formData.email = ''
       formData.comment = ''
       clearErrors()
+      success('Comment added successfully')
       // Можно добавить уведомление об успехе
     } else {
       submitError.value = 'Не удалось отправить комментарий'
+      toastError('Failed to submit comment')
     }
   } catch (err) {
     submitError.value = 'Произошла ошибка при отправке'
+    toastError('An error occurred while submitting the comment')
     console.error('Comment submit error:', err)
   } finally {
     isSubmitting.value = false

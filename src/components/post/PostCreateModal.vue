@@ -1,8 +1,9 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, watch, nextTick, onMounted, onUnmounted } from 'vue'
 import { usePostsStore } from '@/stores/posts'
 import { useValidation } from '@/composables/useValidation'
 import { postValidationSchema } from '@/composables/postValidationSchema'
+import { useToast } from '@/composables/useToast'
 import SvgIcon from '@/components/common/SvgIcon.vue'
 
 const props = defineProps({
@@ -15,12 +16,13 @@ const props = defineProps({
 const emit = defineEmits(['close', 'created'])
 
 const postsStore = usePostsStore()
+const { success, error } = useToast()
 const isSubmitting = ref(false)
 
 // Форма данных
 const formData = ref({
   title: '',
-  body: '', // используем 'body' для консистентности с API
+  body: '',
   image: null,
 })
 
@@ -34,19 +36,23 @@ const { errors, isValid, validateField, validateAll } = useValidation(
 const imagePreview = ref(null)
 const fileInput = ref(null)
 
+// Ссылки на элементы формы
+const modalRef = ref(null)
+const titleInput = ref(null)
+
 const handleImageUpload = (event) => {
   const file = event.target.files[0]
   if (!file) return
 
   // Проверяем тип файла
   if (!file.type.startsWith('image/')) {
-    alert('Пожалуйста, выберите изображение')
+    error('Please select an image file')
     return
   }
 
   // Проверяем размер (максимум 5MB)
   if (file.size > 5 * 1024 * 1024) {
-    alert('Размер файла не должен превышать 5MB')
+    error('File size should not exceed 5MB')
     return
   }
 
@@ -58,6 +64,8 @@ const handleImageUpload = (event) => {
     imagePreview.value = e.target.result
   }
   reader.readAsDataURL(file)
+
+  success('Image added successfully')
 }
 
 const removeImage = () => {
@@ -87,10 +95,9 @@ const closeModal = () => {
 }
 
 const handleSubmit = async () => {
-  console.log('Submitting form with data:', formData.value) // Debug log;
+  console.log('Submitting form with data:', formData.value)
 
   if (!validateAll() || isSubmitting.value) return
-  console.log('Form is valid, proceeding with submission') // Debug log;
 
   isSubmitting.value = true
 
@@ -106,47 +113,62 @@ const handleSubmit = async () => {
     const newPost = await postsStore.createPost({
       title: formData.value.title,
       body: formData.value.body,
-      userId: 1, // Пока захардкодим ID текущего пользователя
-      image: imageUrl, // добавляем изображение в локальном состоянии
+      userId: 1,
+      image: imageUrl,
     })
 
     // Проверяем успешность создания
     if (!newPost) {
-      // Если store вернул null (ошибка), показываем уведомление
-      alert('Произошла ошибка при создании поста. Попробуйте еще раз.')
+      error('Failed to create post. Please try again.')
       return
     }
 
+    success('Post created successfully!')
     emit('created', newPost)
     closeModal()
-  } catch (error) {
-    console.error('Ошибка создания поста:', error)
+  } catch (err) {
+    console.error('Error creating post:', err)
+    error('Something went wrong. Please try again.')
   } finally {
     isSubmitting.value = false
   }
 }
 
-// Закрытие по Escape
+// Обработка клавиатуры
 const handleKeydown = (event) => {
+  // Закрытие по Escape
   if (event.key === 'Escape') {
     closeModal()
+    return
   }
 }
 
-// Фокус на модальное окно при открытии
-const modalRef = ref(null)
+// Фокус на первое поле при открытии модального окна
+const focusFirstInput = async () => {
+  if (props.isOpen) {
+    await nextTick()
+    if (titleInput.value) {
+      titleInput.value.focus()
+    }
+  }
+}
+
+// Слушатели событий клавиатуры
+onMounted(() => {
+  document.addEventListener('keydown', handleKeydown)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('keydown', handleKeydown)
+})
+
+// Следим за открытием модального окна
+watch(() => props.isOpen, focusFirstInput)
 </script>
 
 <template>
   <Teleport to="body">
-    <div
-      v-if="isOpen"
-      ref="modalRef"
-      class="popup-overlay"
-      @click="closeModal"
-      @keydown="handleKeydown"
-      tabindex="0"
-    >
+    <div v-if="isOpen" ref="modalRef" class="popup-overlay" @click="closeModal" tabindex="0">
       <div class="popup popup--medium" @click.stop>
         <div class="popup__header">
           <h2>Create new post</h2>
@@ -160,6 +182,7 @@ const modalRef = ref(null)
             <label class="popup__form-label" for="title">Title:</label>
             <input
               id="title"
+              ref="titleInput"
               v-model="formData.title"
               type="text"
               placeholder="What's on your mind?"
