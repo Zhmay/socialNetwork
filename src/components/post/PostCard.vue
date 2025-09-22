@@ -146,6 +146,7 @@ const goToPostDetail = () => {
 
   &__title {
     display: inline-flex;
+    font-size: 18px;
     font-weight: 700;
     margin-bottom: 8px;
     text-transform: capitalize;

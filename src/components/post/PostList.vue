@@ -1,9 +1,9 @@
 <script setup>
 import { useRoute, useRouter } from 'vue-router'
 import { usePagination } from '@/composables/usePagination'
-import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
 import PostCard from '@/components/post/PostCard.vue'
 import Pagination from '@/components/common/Pagination.vue'
+import PostSkeleton from '@/components/skeleton/PostSkeleton.vue'
 
 // Props
 const props = defineProps({
@@ -56,10 +56,6 @@ const handlePostUpdated = (updatedPost) => {
   emit('post-updated', updatedPost)
 }
 
-const handleReload = () => {
-  emit('reload')
-}
-
 // Методы пагинации
 const handlePageChange = (page) => {
   setPage(page)
@@ -73,14 +69,6 @@ const handlePageChange = (page) => {
   router.push({ query })
 }
 
-// const handlePrevPage = () => {
-//   prevPage()
-//   const newPage = currentPage.value
-//   router.push({
-//     query: { ...route.query, page: newPage > 1 ? newPage : undefined }
-//   })
-// }
-
 const handlePrevPage = () => {
   prevPage()
   const newPage = currentPage.value
@@ -92,14 +80,6 @@ const handlePrevPage = () => {
   }
   router.push({ query })
 }
-
-// const handleNextPage = () => {
-//   nextPage()
-//   const newPage = currentPage.value
-//   router.push({
-//     query: { ...route.query, page: newPage > 1 ? newPage : undefined }
-//   })
-// }
 
 const handleNextPage = () => {
   nextPage()
@@ -134,17 +114,10 @@ defineExpose({
 
   <!-- Состояния загрузки и данных -->
   <div class="content-area">
-    <!-- Полноэкранная загрузка (первая загрузка) -->
-    <LoadingSpinner
-      v-if="loading && posts.length === 0"
-      center
-      size="lg"
-      show-text
-      :text="loadingText"
-    />
+    <PostSkeleton v-if="loading && posts.length === 0" :count="postsPerPage" :show-image="true" />
 
     <div v-else-if="loading && posts.length > 0" class="relative">
-      <div class="posts-list">
+      <div class="posts-list posts-list--loading">
         <PostCard
           v-for="post in paginatedPosts.slice(0, 3)"
           :key="post.id"
@@ -154,18 +127,20 @@ defineExpose({
         />
       </div>
 
-      <LoadingSpinner class="loading-spinner--overlay" size="md" show-text text="Updating..." />
+      <PostSkeleton :count="2" />
     </div>
 
     <div v-else-if="posts.length > 0" class="posts-loaded">
       <div class="posts-list">
-        <PostCard
-          v-for="post in paginatedPosts"
-          :key="post.id"
-          :post="post"
-          :current-page="currentPage"
-          @post-updated="handlePostUpdated"
-        />
+        <TransitionGroup name="item-fade" tag="div" class="posts-list">
+          <PostCard
+            v-for="post in paginatedPosts"
+            :key="post.id"
+            :post="post"
+            :current-page="currentPage"
+            @post-updated="handlePostUpdated"
+          />
+        </TransitionGroup>
       </div>
 
       <Pagination
@@ -184,4 +159,13 @@ defineExpose({
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.posts-list--loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.relative {
+  position: relative;
+}
+</style>

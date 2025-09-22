@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted } from 'vue'
 import { useUsersStore } from '@/stores/users.js'
-import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
+import UserSkeleton from '@/components/skeleton/UserSkeleton.vue'
 import UserCard from '@/components/user/UserCard.vue'
 
 // Props
@@ -9,6 +9,10 @@ const props = defineProps({
   loadingText: {
     type: String,
     default: 'Loading...',
+  },
+  usersPerPage: {
+    type: Number,
+    default: 10,
   },
 })
 
@@ -27,10 +31,14 @@ onMounted(async () => {
   </div>
 
   <!-- Состояния загрузки и данных -->
-  <LoadingSpinner v-if="usersStore.loading" center size="lg" show-text :text="props.loadingText" />
+  <div v-if="usersStore.loading" class="users-list">
+    <UserSkeleton :count="props.usersPerPage" />
+  </div>
 
-  <div v-else-if="usersStore.filteredUsers.length > 0" class="users-list">
-    <UserCard v-for="user in usersStore.filteredUsers" :key="user.id" :user="user" />
+  <div v-else-if="usersStore.filteredUsers.length > 0">
+    <TransitionGroup name="item-fade" tag="div" class="users-list">
+      <UserCard v-for="user in usersStore.filteredUsers" :key="user.id" :user="user" />
+    </TransitionGroup>
   </div>
   <div v-else-if="usersStore.searchQuery" class="no-results">
     No users found for "{{ usersStore.searchQuery }}"
