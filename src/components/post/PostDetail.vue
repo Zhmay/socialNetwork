@@ -9,6 +9,10 @@ const props = defineProps({
     type: Object,
     required: true,
   },
+  goBack: {
+    type: Function,
+    required: true,
+  },
 })
 
 // Emits
@@ -29,6 +33,9 @@ const handleLike = () => {
     <!-- Заголовок -->
     <div class="post__hero">
       <div class="post__hero-img">
+        <button @click="goBack" class="post__back-btn">
+          <SvgIcon name="arrow-small" size="14" />
+        </button>
         <img v-if="post.image" :src="post.image" alt="Post Image" />
         <SvgIcon v-else name="photo" size="80" />
 
@@ -88,6 +95,33 @@ const handleLike = () => {
   &__hero-title {
     text-transform: capitalize;
     margin-bottom: 10px;
+  }
+
+  &__back-btn {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    box-shadow: var(--box-shadow);
+    cursor: pointer;
+    color: var(--accent-color);
+    transform: rotate(180deg);
+    transition:
+      background 0.3s,
+      box-shadow 0.3s;
+
+    &:hover {
+      background: rgba(255, 255, 255, 1);
+      color: var(--accent-color);
+    }
   }
 
   &__like-btn {

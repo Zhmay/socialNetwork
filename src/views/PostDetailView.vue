@@ -20,26 +20,7 @@ const router = useRouter()
 const postsStore = usePostsStore()
 
 // Методы
-const goBack = () => {
-  // const currentRoute = router.currentRoute.value
-
-  // if (currentRoute.query.from) {
-  //   const query = { ...currentRoute.query }
-  //   delete query.from // Убираем служебный параметр
-
-  //   // Если page=1, убираем его из URL
-  //   if (query.page === '1') {
-  //     delete query.page
-  //   }
-
-  //   router.push({
-  //     name: currentRoute.query.from,
-  //     query,
-  //   })
-  // } else {
-  //   router.back()
-  // }
-
+const goBackHandler = () => {
   router.back()
 }
 
@@ -62,9 +43,6 @@ onUnmounted(() => {
 <template>
   <div class="post-detail-view">
     <!-- Навигация -->
-    <button @click="goBack" class="post-detail-view__back-btn">
-      <SvgIcon name="arrow-small" size="14" />
-    </button>
 
     <!-- Контент -->
     <div class="post-detail-view__content">
@@ -80,6 +58,7 @@ onUnmounted(() => {
       <PostDetail
         v-else-if="postsStore.currentPost"
         :post="postsStore.currentPost"
+        :goBack="goBackHandler"
         @post-updated="postsStore.updatePost"
       />
     </div>
@@ -90,33 +69,6 @@ onUnmounted(() => {
 
 <style scoped lang="scss">
 .post-detail-view {
-  &__back-btn {
-    position: absolute;
-    top: 30px;
-    left: 30px;
-    z-index: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    border: none;
-    background: rgba(255, 255, 255, 0.8);
-    border-radius: 50%;
-    box-shadow: var(--box-shadow);
-    cursor: pointer;
-    color: var(--accent-color);
-    transform: rotate(180deg);
-    transition:
-      background 0.3s,
-      box-shadow 0.3s;
-
-    &:hover {
-      background: rgba(255, 255, 255, 1);
-      color: var(--accent-color);
-    }
-  }
-
   &__content {
     margin-bottom: 50px;
   }

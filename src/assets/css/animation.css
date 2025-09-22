@@ -75,3 +75,92 @@
     );
   }
 }
+
+/* Router Transitions - оптимизированы для layout с sidebar */
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.25s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+/* Для детальных страниц постов */
+.slide-up-enter-active,
+.slide-up-leave-active {
+  transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.slide-up-enter-from {
+  opacity: 0;
+  transform: translateY(30px) scale(0.98);
+}
+
+.slide-up-leave-to {
+  opacity: 0;
+  transform: translateY(-15px) scale(1.02);
+}
+
+/* Для профилей пользователей */
+.slide-left-enter-active,
+.slide-left-leave-active {
+  transition: all 0.3s ease;
+}
+
+.slide-left-enter-from {
+  opacity: 0;
+  transform: translateX(25px);
+}
+
+.slide-left-leave-to {
+  opacity: 0;
+  transform: translateX(-15px);
+}
+
+/* Для настроек */
+.slide-right-enter-active,
+.slide-right-leave-active {
+  transition: all 0.3s ease;
+}
+
+.slide-right-enter-from {
+  opacity: 0;
+  transform: translateX(-25px);
+}
+
+.slide-right-leave-to {
+  opacity: 0;
+  transform: translateX(15px);
+}
+
+/* Адаптивность для переходов */
+@media (max-width: 768px) {
+  .slide-up-enter-from,
+  .slide-left-enter-from,
+  .slide-right-enter-from {
+    transform: translateY(20px);
+  }
+
+  .slide-up-leave-to,
+  .slide-left-leave-to,
+  .slide-right-leave-to {
+    transform: translateY(-10px);
+  }
+}
+
+/* Убираем переходы если пользователь предпочитает меньше анимаций */
+@media (prefers-reduced-motion: reduce) {
+  .fade-enter-active,
+  .fade-leave-active,
+  .slide-up-enter-active,
+  .slide-up-leave-active,
+  .slide-left-enter-active,
+  .slide-left-leave-active,
+  .slide-right-enter-active,
+  .slide-right-leave-active {
+    transition: none !important;
+  }
+}
