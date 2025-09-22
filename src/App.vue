@@ -9,9 +9,9 @@ const route = useRoute()
 
 // Функция для определения типа перехода
 const getTransitionName = (route) => {
-  if (route.name === 'PostDetail') return 'slide-up'
-  if (route.name === 'UserProfile') return 'slide-left'
-  if (route.name === 'Settings') return 'slide-right'
+  if (route.name === 'post-detail') return 'slide-up'
+  if (route.name === 'people') return 'slide-left'
+  if (route.name === 'settings') return 'slide-right'
   return 'fade'
 }
 </script>
