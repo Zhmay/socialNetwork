@@ -26,7 +26,9 @@ const { comments, commentsCount, error } = useComments(props.postId)
     <CommentsForm :postId="postId" />
     <p v-if="comments.length === 0">Комментариев нет.</p>
     <div v-else class="comments-list">
-      <CommentItem v-for="comment in comments" :key="comment.id" :comment="comment" />
+      <TransitionGroup name="comment-add" tag="div" class="comments-list">
+        <CommentItem v-for="comment in comments" :key="comment.id" :comment="comment" />
+      </TransitionGroup>
     </div>
   </div>
 </template>

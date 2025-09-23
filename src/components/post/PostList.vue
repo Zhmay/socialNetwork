@@ -1,4 +1,5 @@
 <script setup>
+import { ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { usePagination } from '@/composables/usePagination'
 import PostCard from '@/components/post/PostCard.vue'
@@ -35,6 +36,7 @@ const props = defineProps({
 
 const route = useRoute()
 const router = useRouter()
+const newPostIds = ref(new Set())
 
 // Emits
 const emit = defineEmits(['post-updated', 'reload'])
@@ -104,6 +106,27 @@ const setPageFromUrl = (page) => {
 defineExpose({
   setPageFromUrl,
 })
+
+watch(
+  () => props.posts,
+  (newPosts, oldPosts) => {
+    // Проверяем что у нас реально были старые посты
+    if (!oldPosts || oldPosts.length === 0) return
+
+    if (newPosts.length > oldPosts.length) {
+      const oldIds = new Set(oldPosts.map((p) => p.id))
+      newPosts.forEach((post) => {
+        if (!oldIds.has(post.id)) {
+          newPostIds.value.add(post.id)
+          setTimeout(() => {
+            newPostIds.value.delete(post.id)
+          }, 3000)
+        }
+      })
+    }
+  },
+  { deep: true },
+)
 </script>
 
 <template>
@@ -131,17 +154,16 @@ defineExpose({
     </div>
 
     <div v-else-if="posts.length > 0" class="posts-loaded">
-      <div class="posts-list">
-        <TransitionGroup name="item-fade" tag="div" class="posts-list">
-          <PostCard
-            v-for="post in paginatedPosts"
-            :key="post.id"
-            :post="post"
-            :current-page="currentPage"
-            @post-updated="handlePostUpdated"
-          />
-        </TransitionGroup>
-      </div>
+      <TransitionGroup name="post-enhanced" tag="div" class="posts-list">
+        <PostCard
+          v-for="post in paginatedPosts"
+          :key="post.id"
+          :post="post"
+          :current-page="currentPage"
+          :class="{ 'post-card--fresh': newPostIds.has(post.id) }"
+          @post-updated="handlePostUpdated"
+        />
+      </TransitionGroup>
 
       <Pagination
         v-if="totalPages > 1"

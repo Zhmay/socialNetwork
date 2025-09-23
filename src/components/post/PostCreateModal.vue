@@ -18,6 +18,7 @@ const emit = defineEmits(['close', 'created'])
 const postsStore = usePostsStore()
 const { success, error } = useToast()
 const isSubmitting = ref(false)
+const isClosing = ref(false) // Для анимации закрытия
 
 // Форма данных
 const formData = ref({
@@ -89,9 +90,18 @@ const resetForm = () => {
   }
 }
 
+// Плавное закрытие модального окна
 const closeModal = () => {
-  resetForm()
-  emit('close')
+  if (isClosing.value) return
+
+  isClosing.value = true
+
+  // Ждем завершения анимации закрытия
+  setTimeout(() => {
+    resetForm()
+    isClosing.value = false
+    emit('close')
+  }, 300) // 300ms - время анимации закрытия
 }
 
 const handleSubmit = async () => {
@@ -103,10 +113,8 @@ const handleSubmit = async () => {
 
   try {
     // В реальном приложении здесь бы загружали изображение на сервер
-    // Пока просто эмулируем URL изображения
     let imageUrl = null
     if (formData.value.image) {
-      // Эмуляция загрузки - в реальности здесь был бы API вызов
       imageUrl = URL.createObjectURL(formData.value.image)
     }
 
@@ -125,7 +133,12 @@ const handleSubmit = async () => {
 
     success('Post created successfully!')
     emit('created', newPost)
-    closeModal()
+
+    // КЛЮЧЕВОЕ ИЗМЕНЕНИЕ: задержка перед закрытием
+    // Это позволит увидеть начальную анимацию поста (зеленый фон)
+    setTimeout(() => {
+      closeModal()
+    }, 200) // 200ms задержка для синхронизации
   } catch (err) {
     console.error('Error creating post:', err)
     error('Something went wrong. Please try again.')
@@ -136,7 +149,6 @@ const handleSubmit = async () => {
 
 // Обработка клавиатуры
 const handleKeydown = (event) => {
-  // Закрытие по Escape
   if (event.key === 'Escape') {
     closeModal()
     return
@@ -145,7 +157,7 @@ const handleKeydown = (event) => {
 
 // Фокус на первое поле при открытии модального окна
 const focusFirstInput = async () => {
-  if (props.isOpen) {
+  if (props.isOpen && !isClosing.value) {
     await nextTick()
     if (titleInput.value) {
       titleInput.value.focus()
@@ -168,89 +180,97 @@ watch(() => props.isOpen, focusFirstInput)
 
 <template>
   <Teleport to="body">
-    <div v-if="isOpen" ref="modalRef" class="popup-overlay" @click="closeModal" tabindex="0">
-      <div class="popup popup--medium" @click.stop>
-        <div class="popup__header">
-          <h2>Create new post</h2>
-          <button class="popup__close" @click="closeModal" type="button" aria-label="close">
-            <SvgIcon name="close" size="24" />
-          </button>
-        </div>
-
-        <form @submit.prevent="handleSubmit" class="popup__form">
-          <div class="popup__form-group">
-            <label class="popup__form-label" for="title">Title:</label>
-            <input
-              id="title"
-              ref="titleInput"
-              v-model="formData.title"
-              type="text"
-              placeholder="What's on your mind?"
-              :class="{ error: errors.title }"
-              @blur="validateField('title')"
-              @input="errors.title = ''"
-            />
-            <span v-if="errors.title" class="field-error">
-              {{ errors.title }}
-            </span>
-          </div>
-
-          <div class="popup__form-group">
-            <label class="popup__form-label" for="body">Message:</label>
-            <textarea
-              id="body"
-              v-model="formData.body"
-              placeholder="Write your post here..."
-              :class="{ error: errors.body }"
-              @blur="validateField('body')"
-              @input="errors.body = ''"
-            ></textarea>
-            <span v-if="errors.body" class="field-error">
-              {{ errors.body }}
-            </span>
-          </div>
-
-          <div class="popup__form-group">
-            <label class="popup__form-label">Image (optional):</label>
-            <div class="add-photo">
-              <input
-                ref="fileInput"
-                type="file"
-                accept="image/*"
-                @change="handleImageUpload"
-                class="add-photo__input"
-                id="image-upload"
-              />
-
-              <div v-if="imagePreview" class="add-photo__preview">
-                <img :src="imagePreview" alt="Preview" />
-                <button
-                  type="button"
-                  @click="removeImage"
-                  class="add-photo__preview-remove"
-                  aria-label="remove"
-                >
-                  <SvgIcon name="close" size="16" />
-                </button>
-              </div>
-
-              <label v-else for="image-upload" class="add-photo__holder">
-                <SvgIcon name="photo" size="36" />
-                <span>Add Photo</span>
-              </label>
-            </div>
-          </div>
-
-          <!-- Кнопки действий -->
-          <div class="popup__form-ctrl">
-            <button type="button" class="btn btn--border" @click="closeModal">Cancel</button>
-            <button type="submit" class="btn">
-              {{ isSubmitting ? 'Publishing...' : 'Publish' }}
+    <Transition name="modal" appear>
+      <div
+        v-if="isOpen && !isClosing"
+        ref="modalRef"
+        class="popup-overlay"
+        @click="closeModal"
+        tabindex="0"
+      >
+        <div class="popup popup--medium" @click.stop>
+          <div class="popup__header">
+            <h2>Create new post</h2>
+            <button class="popup__close" @click="closeModal" type="button" aria-label="close">
+              <SvgIcon name="close" size="24" />
             </button>
           </div>
-        </form>
+
+          <form @submit.prevent="handleSubmit" class="popup__form">
+            <div class="popup__form-group">
+              <label class="popup__form-label" for="title">Title:</label>
+              <input
+                id="title"
+                ref="titleInput"
+                v-model="formData.title"
+                type="text"
+                placeholder="What's on your mind?"
+                :class="{ error: errors.title }"
+                @blur="validateField('title')"
+                @input="errors.title = ''"
+              />
+              <span v-if="errors.title" class="field-error">
+                {{ errors.title }}
+              </span>
+            </div>
+
+            <div class="popup__form-group">
+              <label class="popup__form-label" for="body">Message:</label>
+              <textarea
+                id="body"
+                v-model="formData.body"
+                placeholder="Write your post here..."
+                :class="{ error: errors.body }"
+                @blur="validateField('body')"
+                @input="errors.body = ''"
+              ></textarea>
+              <span v-if="errors.body" class="field-error">
+                {{ errors.body }}
+              </span>
+            </div>
+
+            <div class="popup__form-group">
+              <label class="popup__form-label">Image (optional):</label>
+              <div class="add-photo">
+                <input
+                  ref="fileInput"
+                  type="file"
+                  accept="image/*"
+                  @change="handleImageUpload"
+                  class="add-photo__input"
+                  id="image-upload"
+                />
+
+                <div v-if="imagePreview" class="add-photo__preview">
+                  <img :src="imagePreview" alt="Preview" />
+                  <button
+                    type="button"
+                    @click="removeImage"
+                    class="add-photo__preview-remove"
+                    aria-label="remove"
+                  >
+                    <SvgIcon name="close" size="16" />
+                  </button>
+                </div>
+
+                <label v-else for="image-upload" class="add-photo__holder">
+                  <SvgIcon name="photo" size="36" />
+                  <span>Add Photo</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Кнопки действий -->
+            <div class="popup__form-ctrl">
+              <button type="button" class="btn btn--border" @click="closeModal">Cancel</button>
+              <button type="submit" class="btn" :class="{ 'btn--loading': isSubmitting }">
+                {{ isSubmitting ? 'Publishing...' : 'Publish' }}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
-    </div>
+    </Transition>
   </Teleport>
 </template>
 
