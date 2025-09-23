@@ -36,10 +36,10 @@ const router = createRouter({
       component: UserProfileView,
       props: (route) => ({ id: Number(route.params.id) }),
     },
-    // Fallback для несуществующих маршрутов
     {
       path: '/:pathMatch(.*)*',
-      redirect: '/',
+      name: 'NotFound',
+      component: () => import('@/views/NotFoundView.vue'),
     },
   ],
 })
