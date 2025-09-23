@@ -1,8 +1,10 @@
 <script setup>
 import { onMounted } from 'vue'
 import { useUsersStore } from '@/stores/users.js'
+import { useErrorHandling } from '@/composables/useErrorHandling'
 import UserSkeleton from '@/components/skeleton/UserSkeleton.vue'
 import UserCard from '@/components/user/UserCard.vue'
+import ErrorState from '@/components/common/ErrorState.vue'
 
 // Props
 const props = defineProps({
@@ -14,10 +16,29 @@ const props = defineProps({
     type: Number,
     default: 10,
   },
+  error: {
+    type: [Object, String, null],
+    default: null,
+  },
+  retryFunction: {
+    type: Function,
+    required: true,
+  },
+  clearErrorFunction: {
+    type: Function,
+    default: null,
+  },
 })
 
 // Composables
 const usersStore = useUsersStore()
+const { simpleRetry } = useErrorHandling()
+
+// Methods
+const handleReload = async () => {
+  await simpleRetry(props.retryFunction, props.clearErrorFunction)
+  emit('reload')
+}
 
 // Lifecycle
 onMounted(async () => {
@@ -26,9 +47,7 @@ onMounted(async () => {
 </script>
 <template>
   <!-- Отображение ошибки -->
-  <div v-if="usersStore.error" class="error-message">
-    <p><strong>Ошибка:</strong> {{ error }}</p>
-  </div>
+  <ErrorState v-if="usersStore.error" :error="usersStore.error" @retry="handleReload" />
 
   <!-- Состояния загрузки и данных -->
   <div v-if="usersStore.loading" class="users-list">

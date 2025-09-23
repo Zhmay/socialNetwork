@@ -2,9 +2,11 @@
 import { ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { usePagination } from '@/composables/usePagination'
+import { useErrorHandling } from '@/composables/useErrorHandling'
 import PostCard from '@/components/post/PostCard.vue'
 import Pagination from '@/components/common/Pagination.vue'
 import PostSkeleton from '@/components/skeleton/PostSkeleton.vue'
+import ErrorState from '@/components/common/ErrorState.vue'
 
 // Props
 const props = defineProps({
@@ -17,7 +19,7 @@ const props = defineProps({
     default: false,
   },
   error: {
-    type: String,
+    type: [Object, String, null],
     default: null,
   },
   postsPerPage: {
@@ -32,6 +34,14 @@ const props = defineProps({
     type: String,
     default: 'Loading...',
   },
+  retryFunction: {
+    type: Function,
+    required: true,
+  },
+  clearErrorFunction: {
+    type: Function,
+    default: null,
+  },
 })
 
 const route = useRoute()
@@ -42,6 +52,7 @@ const newPostIds = ref(new Set())
 const emit = defineEmits(['post-updated', 'reload'])
 
 // Composables
+const { simpleRetry } = useErrorHandling()
 const {
   paginatedItems: paginatedPosts,
   currentPage,
@@ -56,6 +67,11 @@ const {
 // Методы
 const handlePostUpdated = (updatedPost) => {
   emit('post-updated', updatedPost)
+}
+
+const handleReload = async () => {
+  await simpleRetry(props.retryFunction, props.clearErrorFunction)
+  emit('reload')
 }
 
 // Методы пагинации
@@ -131,9 +147,7 @@ watch(
 
 <template>
   <!-- Отображение ошибки -->
-  <div v-if="error" class="error-message">
-    <p><strong>Ошибка:</strong> {{ error }}</p>
-  </div>
+  <ErrorState v-if="error" :error="error" @retry="handleReload" />
 
   <!-- Состояния загрузки и данных -->
   <div class="content-area">

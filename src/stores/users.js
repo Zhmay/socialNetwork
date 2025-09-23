@@ -58,7 +58,7 @@ export const useUsersStore = defineStore('users', () => {
       const response = await usersService.getAllUsers()
       users.value = response.data
     } catch (err) {
-      error.value = 'Ошибка загрузки пользователей: ' + err.message
+      error.value = err
       console.error('Error fetching users:', err)
     } finally {
       loading.value = false
@@ -74,7 +74,7 @@ export const useUsersStore = defineStore('users', () => {
       currentUser.value = response.data
       return currentUser.value
     } catch (err) {
-      error.value = 'Ошибка загрузки пользователя: ' + err.message
+      error.value = err
       console.error('Error fetching user:', err)
       return null
     } finally {
@@ -103,7 +103,7 @@ export const useUsersStore = defineStore('users', () => {
       userPosts.value = postsWithLikes
       return postsWithLikes
     } catch (err) {
-      error.value = 'Ошибка загрузки постов пользователя: ' + err.message
+      error.value = err
       console.error('Error fetching user posts:', err)
       return []
     } finally {

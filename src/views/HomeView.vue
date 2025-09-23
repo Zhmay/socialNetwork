@@ -15,6 +15,8 @@ const postsStore = usePostsStore()
 // Ref для PostList компонента
 const postListRef = ref(null)
 const isPostsLoaded = ref(false)
+const retryLoadPosts = () => postsStore.fetchAllPosts()
+const clearPostsError = () => postsStore.clearError()
 
 // Computed для передачи в SearchBox
 const searchResults = computed(() => ({
@@ -92,6 +94,8 @@ onMounted(() => {
       :posts="postsStore.filteredPosts"
       :loading="postsStore.loading"
       :error="postsStore.error"
+      :retry-function="retryLoadPosts"
+      :clear-error-function="clearPostsError"
       :posts-per-page="14"
       :show-stats="true"
       @post-updated="handlePostUpdated"

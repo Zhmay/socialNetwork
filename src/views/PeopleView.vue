@@ -7,6 +7,9 @@ import UserList from '@/components/user/UserList.vue'
 // Store
 const usersStore = useUsersStore()
 
+const retryLoadUsers = () => usersStore.fetchAllUsers()
+const clearUsersError = () => usersStore.clearError()
+
 // Computed для SearchBox
 const searchResults = computed(() => ({
   total: usersStore.filteredUsers.length,
@@ -31,7 +34,12 @@ const handleSearch = (query) => {
         @search="handleSearch"
       />
     </div>
-    <UserList :loadingText="'Loading users...'" />
+    <UserList
+      :error="usersStore.error"
+      :retry-function="retryLoadUsers"
+      :clear-error-function="clearUsersError"
+      :loadingText="'Loading users...'"
+    />
   </div>
 </template>
 

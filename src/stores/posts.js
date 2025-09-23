@@ -120,7 +120,7 @@ export const usePostsStore = defineStore('posts', () => {
 
       console.log('Итого постов после объединения:', posts.value.length)
     } catch (err) {
-      error.value = 'Ошибка загрузки постов: ' + err.message
+      error.value = err
       console.error('Error fetching posts:', err)
     } finally {
       loading.value = false
@@ -163,7 +163,7 @@ export const usePostsStore = defineStore('posts', () => {
         return localPost
       }
 
-      error.value = 'Ошибка загрузки поста: ' + err.message
+      error.value = err
       console.error('Error fetching post:', err)
       currentPost.value = null
       throw err
@@ -204,7 +204,7 @@ export const usePostsStore = defineStore('posts', () => {
       posts.value.unshift(enrichedPost)
       return enrichedPost
     } catch (err) {
-      error.value = 'Ошибка создания поста: ' + err.message
+      error.value = err
       console.error('Error creating post:', err)
       return null
     } finally {
