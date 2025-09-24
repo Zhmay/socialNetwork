@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import SvgIcon from './SvgIcon.vue'
 import PostCreateModal from '@/components/post/PostCreateModal.vue'
+import WeatherWidget from '@/components/common/WeatherWidget.vue'
 
 // Состояние модального окна
 const isCreateModalOpen = ref(false)
@@ -35,6 +36,9 @@ const handlePostCreated = (newPost) => {
         <span class="sidebar__user-name">Bogdan</span>
       </div>
     </div>
+
+    <!-- Виджет погоды -->
+    <WeatherWidget />
 
     <!-- Модальное окно создания поста -->
     <PostCreateModal
