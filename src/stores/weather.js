@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { getCurrentWeather, getIconUrl } from '@/services/weather.service'
+import { getWeatherIcon } from '@/utils/weatherIcons'
 
 export const useWeatherStore = defineStore('weather', {
   state: () => ({
@@ -14,7 +15,7 @@ export const useWeatherStore = defineStore('weather', {
   getters: {
     formattedTemperature: (state) => {
       if (!state.currentWeather) return null
-      return `${state.currentWeather.temperature}°C`
+      return `${state.currentWeather.temperature}`
     },
 
     formattedLastUpdate: (state) => {
@@ -27,7 +28,13 @@ export const useWeatherStore = defineStore('weather', {
 
     weatherIconUrl: (state) => {
       if (!state.currentWeather?.icon) return null
-      return getIconUrl(state.currentWeather.icon)
+      const iconFileName = getWeatherIcon(state.currentWeather.icon)
+      return new URL(`../assets/icons/weather/${iconFileName}`, import.meta.url).href
+    },
+
+    weatherIconName: (state) => {
+      if (!state.currentWeather?.icon) return null
+      return getWeatherIcon(state.currentWeather.icon)
     },
 
     formattedSunrise: (state) => {
@@ -75,7 +82,7 @@ export const useWeatherStore = defineStore('weather', {
 
     weatherFeelsLike: (state) => {
       if (!state.currentWeather?.feelsLike) return null
-      return `${state.currentWeather.feelsLike}°C`
+      return `${state.currentWeather.feelsLike}°`
     },
 
     weatherDate: (state) => {
