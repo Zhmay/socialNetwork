@@ -2,6 +2,7 @@
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useWeatherStore } from '@/stores/weather'
 import SvgIcon from '@/components/common/SvgIcon.vue'
+import WeatherSkeleton from '@/components/skeleton/WeatherSkeleton.vue'
 
 const weatherStore = useWeatherStore()
 const autoRefreshInterval = ref(null)
@@ -68,20 +69,15 @@ onUnmounted(() => {
 
 <template>
   <div class="weather-widget">
-    <!-- Показываем loader только при ПЕРВОЙ загрузке -->
-    <div v-if="isLoading && !weatherData" class="weather-loading">Loading weather...</div>
+    <!-- Показываем skeleton только при ПЕРВОЙ загрузке -->
+    <WeatherSkeleton v-if="isLoading && !weatherData" />
 
-    <!-- Error состояние -->
     <div v-else-if="error && !weatherData" class="weather-error">
       <p>{{ error }}</p>
-      <button @click="refreshWeather">Повторить</button>
+      <button @click="refreshWeather">Try again</button>
     </div>
 
-    <!-- Основной интерфейс - показываем ВСЕГДА когда есть данные -->
     <div v-else-if="weatherData" class="weather-content">
-      <!-- Мини-индикатор обновления -->
-
-      <!-- Заголовок с городом -->
       <div class="weather-widget__head">
         <div class="weather-widget__head-box">
           <h3>{{ city }}, {{ country }}</h3>
@@ -98,8 +94,6 @@ onUnmounted(() => {
         <div class="weather-widget__day">{{ dayOfWeek }}</div>
         <div class="weather-widget__date">{{ date }}</div>
       </div>
-
-      <!-- Основная информация -->
       <div class="weather-widget__main">
         <div class="weather-widget__main-details">
           <div class="weather-widget__main-item weather-widget__main-item--humidity">
@@ -125,8 +119,6 @@ onUnmounted(() => {
           </div>
         </div>
       </div>
-
-      <!-- Дополнительная информация -->
       <div class="weather-widget__details">
         <div class="weather-widget__details-box weather-widget__details-box--second">
           <div class="weather-widget__details-item weather-widget__details-item--sunrise">
@@ -145,9 +137,7 @@ onUnmounted(() => {
           </div>
         </div>
       </div>
-
       <span v-if="lastUpdate" class="weather-widget__last-update">Обновлено: {{ lastUpdate }}</span>
-
       <div class="weather-widget__decor">
         <img src="@/assets/img/widget-bg.webp" />
       </div>
