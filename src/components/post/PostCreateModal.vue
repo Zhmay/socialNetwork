@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, nextTick, onMounted, onUnmounted } from 'vue'
+import { reactive, ref, watch, nextTick, onMounted, onUnmounted } from 'vue'
 import { usePostsStore } from '@/stores/posts'
 import { useValidation } from '@/composables/useValidation'
 import { postValidationSchema } from '@/composables/postValidationSchema'
@@ -21,17 +21,15 @@ const isSubmitting = ref(false)
 const isClosing = ref(false) // Для анимации закрытия
 
 // Форма данных
-const formData = ref({
+const formData = reactive({
   title: '',
   body: '',
   image: null,
 })
 
 // Валидация
-const { errors, isValid, validateField, validateAll } = useValidation(
-  postValidationSchema,
-  formData.value,
-)
+const { errors, isValid, validateField, validateAll, clearFieldError, resetValidation } =
+  useValidation(postValidationSchema, formData)
 
 // Для работы с изображениями
 const imagePreview = ref(null)
@@ -57,7 +55,7 @@ const handleImageUpload = (event) => {
     return
   }
 
-  formData.value.image = file
+  formData.image = file
 
   // Создаем превью
   const reader = new FileReader()
@@ -70,7 +68,7 @@ const handleImageUpload = (event) => {
 }
 
 const removeImage = () => {
-  formData.value.image = null
+  formData.image = null
   imagePreview.value = null
   if (fileInput.value) {
     fileInput.value.value = ''
@@ -78,13 +76,12 @@ const removeImage = () => {
 }
 
 const resetForm = () => {
-  formData.value = {
-    title: '',
-    body: '',
-    image: null,
-  }
+  formData.title = ''
+  formData.body = ''
+  formData.image = null
+
   imagePreview.value = null
-  errors.value = {}
+  resetValidation()
   if (fileInput.value) {
     fileInput.value.value = ''
   }
@@ -105,7 +102,7 @@ const closeModal = () => {
 }
 
 const handleSubmit = async () => {
-  console.log('Submitting form with data:', formData.value)
+  console.log('Submitting form with data:', formData)
 
   if (!validateAll() || isSubmitting.value) return
 
@@ -114,13 +111,13 @@ const handleSubmit = async () => {
   try {
     // В реальном приложении здесь бы загружали изображение на сервер
     let imageUrl = null
-    if (formData.value.image) {
-      imageUrl = URL.createObjectURL(formData.value.image)
+    if (formData.image) {
+      imageUrl = URL.createObjectURL(formData.image)
     }
 
     const newPost = await postsStore.createPost({
-      title: formData.value.title,
-      body: formData.value.body,
+      title: formData.title,
+      body: formData.body,
       userId: 1,
       image: imageUrl,
     })
@@ -207,7 +204,7 @@ watch(() => props.isOpen, focusFirstInput)
                 placeholder="What's on your mind?"
                 :class="{ error: errors.title }"
                 @blur="validateField('title')"
-                @input="errors.title = ''"
+                @input="clearFieldError('title')"
               />
               <span v-if="errors.title" class="field-error">
                 {{ errors.title }}
@@ -222,7 +219,7 @@ watch(() => props.isOpen, focusFirstInput)
                 placeholder="Write your post here..."
                 :class="{ error: errors.body }"
                 @blur="validateField('body')"
-                @input="errors.body = ''"
+                @input="clearFieldError('body')"
               ></textarea>
               <span v-if="errors.body" class="field-error">
                 {{ errors.body }}

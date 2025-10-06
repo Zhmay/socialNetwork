@@ -7,7 +7,7 @@ const validationRules = {
   email: (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
 }
 
-export function useValidation(schema, values) {
+export function useValidation(schema, formData) {
   const errors = ref({})
   const touched = ref({})
   const hasTriedSubmit = ref(false)
@@ -15,7 +15,7 @@ export function useValidation(schema, values) {
   // Валидация одного поля
   const validateField = (fieldName) => {
     const fieldSchema = schema[fieldName]
-    const fieldValue = values[fieldName]
+    const fieldValue = formData[fieldName]
 
     if (!fieldSchema) return true
 
@@ -46,10 +46,20 @@ export function useValidation(schema, values) {
 
   const isFormValid = computed(() => Object.keys(errors.value).length === 0)
 
+  const clearFieldError = (fieldName) => {
+    if (errors.value[fieldName]) {
+      delete errors.value[fieldName]
+    }
+  }
+
   const clearErrors = () => {
     errors.value = {}
     touched.value = {}
     hasTriedSubmit.value = false
+  }
+
+  const resetValidation = () => {
+    errors.value = {}
   }
 
   return {
@@ -59,6 +69,8 @@ export function useValidation(schema, values) {
     validateField,
     validateAll,
     isFormValid,
+    clearFieldError,
     clearErrors,
+    resetValidation,
   }
 }
