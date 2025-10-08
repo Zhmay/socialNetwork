@@ -1,8 +1,9 @@
 <script setup>
-import { ref } from 'vue'
+import { defineAsyncComponent, ref } from 'vue'
 import SvgIcon from './SvgIcon.vue'
-import PostCreateModal from '@/components/post/PostCreateModal.vue'
-import WeatherWidget from '@/components/common/WeatherWidget.vue'
+
+const PostCreateModal = defineAsyncComponent(() => import('@/components/post/PostCreateModal.vue'))
+const WeatherWidget = defineAsyncComponent(() => import('@/components/common/WeatherWidget.vue'))
 
 // Состояние модального окна
 const isCreateModalOpen = ref(false)
@@ -42,6 +43,7 @@ const handlePostCreated = (newPost) => {
 
     <!-- Модальное окно создания поста -->
     <PostCreateModal
+      v-if="isCreateModalOpen"
       :isOpen="isCreateModalOpen"
       @close="closeCreateModal"
       @created="handlePostCreated"
