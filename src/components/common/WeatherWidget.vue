@@ -21,10 +21,14 @@ const sunrise = computed(() => weatherStore.formattedSunrise)
 const sunset = computed(() => weatherStore.formattedSunset)
 const temperature = computed(() => weatherStore.formattedTemperature)
 const description = computed(() => weatherStore.weatherDescription)
-const iconUrl = computed(() => weatherStore.weatherIconUrl)
 const date = computed(() => weatherStore.weatherDate)
 const dayOfWeek = computed(() => weatherStore.weatherDayOfWeek)
 const lastUpdate = computed(() => weatherStore.formattedLastUpdate)
+
+const getWeatherIconUrl = (iconName) => {
+  if (!iconName) return null
+  return new URL(`../../assets/icons/weather/${iconName}`, import.meta.url).href
+}
 
 const refreshWeather = async () => {
   await weatherStore.refreshWeather()
@@ -97,14 +101,14 @@ onUnmounted(() => {
       <div class="weather-widget__main">
         <div class="weather-widget__main-details">
           <div class="weather-widget__main-item weather-widget__main-item--humidity">
-            <img src="@/assets/icons/weather/humidity.svg" />
+            <img :src="getWeatherIconUrl('humidity.svg')" alt="humidity" />
             <div>
               <strong>{{ humidity }}</strong>
               <span>humidity</span>
             </div>
           </div>
           <div class="weather-widget__main-item weather-widget__main-item--wind">
-            <img src="@/assets/icons/weather/windsock.svg" />
+            <img :src="getWeatherIconUrl('windsock.svg')" alt="wind" />
             <div>
               <strong>{{ windSpeed }}</strong>
               <span>wind</span>
@@ -112,7 +116,11 @@ onUnmounted(() => {
           </div>
         </div>
         <div class="weather-widget__main-info">
-          <img v-if="iconUrl" :src="iconUrl" :alt="description" class="weather-icon" />
+          <img
+            :src="getWeatherIconUrl(weatherStore.weatherIconName)"
+            :alt="description"
+            class="weather-icon"
+          />
           <div class="weather-widget__main-box">
             <div class="weather-widget__main-temperature">{{ temperature }}<sup>°C</sup></div>
             <p class="weather-widget__main-description">{{ description }}</p>
@@ -122,14 +130,14 @@ onUnmounted(() => {
       <div class="weather-widget__details">
         <div class="weather-widget__details-box weather-widget__details-box--second">
           <div class="weather-widget__details-item weather-widget__details-item--sunrise">
-            <img src="@/assets/icons/weather/sunrise.svg" />
+            <img :src="getWeatherIconUrl('sunrise.svg')" alt="sunrise" />
             <div>
               <strong>{{ sunrise }}</strong>
               <span>sunrise</span>
             </div>
           </div>
           <div class="weather-widget__details-item weather-widget__details-item--sunset">
-            <img src="@/assets/icons/weather/sunset.svg" />
+            <img :src="getWeatherIconUrl('sunset.svg')" alt="sunset" />
             <div>
               <strong>{{ sunset }}</strong>
               <span>sunset</span>

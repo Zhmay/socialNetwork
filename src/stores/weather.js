@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { getCurrentWeather, getIconUrl } from '@/services/weather.service'
+import { getCurrentWeather } from '@/services/weather.service'
 import { getWeatherIcon } from '@/utils/weatherIcons'
 
 export const useWeatherStore = defineStore('weather', {
@@ -24,12 +24,6 @@ export const useWeatherStore = defineStore('weather', {
         hour: '2-digit',
         minute: '2-digit',
       })
-    },
-
-    weatherIconUrl: (state) => {
-      if (!state.currentWeather?.icon) return null
-      const iconFileName = getWeatherIcon(state.currentWeather.icon)
-      return new URL(`../assets/icons/weather/${iconFileName}`, import.meta.url).href
     },
 
     weatherIconName: (state) => {

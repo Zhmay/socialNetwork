@@ -1,8 +1,7 @@
 <script setup></script>
 <template>
   <div class="settings">
-    <h1>Настройки</h1>
-    <p>Настройки приложения</p>
+    <h1>Settings</h1>
   </div>
 </template>
 
