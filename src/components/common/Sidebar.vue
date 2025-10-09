@@ -33,7 +33,9 @@ const handlePostCreated = (newPost) => {
         <SvgIcon name="plus" size="20" />
       </button>
       <div class="sidebar__user">
-        <div class="sidebar__user-img"></div>
+        <div class="sidebar__user-img">
+          <img src="@/assets/img/creator.webp" alt="user" />
+        </div>
         <span class="sidebar__user-name">Bogdan</span>
       </div>
     </div>
@@ -95,6 +97,13 @@ const handlePostCreated = (newPost) => {
       background-color: var(--border-color);
       border: 2px solid var(--accent-color);
       border-radius: 50%;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+      }
     }
 
     &-name {
