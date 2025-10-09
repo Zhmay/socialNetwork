@@ -43,10 +43,10 @@ const goBack = () => {
       </button>
     </div>
     <!-- Loading состояние -->
-    <LoadingSpinner v-if="usersStore.loading" size="lg" center />
+    <!-- <LoadingSpinner v-if="usersStore.loading" size="lg" center /> -->
 
     <!-- Error состояние -->
-    <div v-else-if="usersStore.error" class="error-message">
+    <div v-if="usersStore.error" class="error-message">
       <p><strong>Ошибка:</strong> {{ usersStore.error }}</p>
     </div>
 

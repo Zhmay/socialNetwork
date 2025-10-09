@@ -47,10 +47,10 @@ onUnmounted(() => {
     <!-- Контент -->
     <div class="post-detail-view__content">
       <!-- Loading состояние -->
-      <LoadingSpinner v-if="postsStore.loading" size="lg" center />
+      <!-- <LoadingSpinner v-if="postsStore.loading" size="lg" center /> -->
 
       <!-- Error состояние -->
-      <div v-else-if="postsStore.error" class="post-detail-view__error">
+      <div v-if="postsStore.error" class="post-detail-view__error">
         {{ postsStore.error }}
       </div>
 

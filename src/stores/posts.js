@@ -89,7 +89,7 @@ export const usePostsStore = defineStore('posts', () => {
     try {
       // Сохраняем локально созданные посты (с ID больше 100)
       const localPosts = posts.value.filter((post) => post.id > 100)
-      console.log('Сохраняем локальные посты:', localPosts.length)
+      // console.log('Сохраняем локальные посты:', localPosts.length)
 
       const response = await postsService.getAllPosts()
       const rawPosts = response.data.map((post) => initializePostLikes(post))
@@ -118,7 +118,7 @@ export const usePostsStore = defineStore('posts', () => {
       // Объединяем локальные посты с API постами (локальные в начале)
       posts.value = [...localPosts, ...enrichedApiPosts]
 
-      console.log('Итого постов после объединения:', posts.value.length)
+      // console.log('Итого постов после объединения:', posts.value.length)
     } catch (err) {
       error.value = err
       console.error('Error fetching posts:', err)
@@ -157,7 +157,7 @@ export const usePostsStore = defineStore('posts', () => {
       // При ошибке API проверяем локальные посты
       const localPost = posts.value.find((post) => post.id == id)
       if (localPost) {
-        console.log('Найден локальный пост после ошибки API:', localPost.title)
+        // console.log('Найден локальный пост после ошибки API:', localPost.title)
         currentPost.value = localPost
         loading.value = false
         return localPost
