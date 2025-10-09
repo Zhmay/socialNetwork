@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const API_KEY = '689b976106192d25ebc9c0a6a4e33175'
+const API_KEY = import.meta.env.VITE_WEATHER_API_KEY
 const BASE_URL = 'https://api.openweathermap.org/data/2.5'
 
 // Функция для retry логики
